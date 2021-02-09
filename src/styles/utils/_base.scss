@@ -1,0 +1,23 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	padding: 3rem;
+}
+
+form {
+	display: flex;
+	flex-direction: column;
+	width: 250px;
+
+	& > * {
+		margin-bottom: 0.5rem;
+	}
+}
+
+input[type="checkbox"] {
+	margin-right: 4px;
+}
