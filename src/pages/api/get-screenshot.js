@@ -4,11 +4,11 @@ import browserConfig from "../../utils/browserConfig";
 
 // https://stackoverflow.com/questions/21227078/convert-base64-to-image-in-javascript-jquery
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
 	if (req.method !== "POST") res.status(405).end(); // Method not allowed;
 
 	const { url, resolution, color, mode } = req.body.options;
-	console.log("req.body.options;:", req.body.options);
+	// console.log("req.body.options;:", req.body.options);
 
 	const browserFrameFilename = resolution.value;
 
@@ -59,7 +59,7 @@ export default function handler(req, res) {
 		}
 	};
 
-	takeScreenshot();
+	await takeScreenshot();
 }
 
 // let bodyHTML = await page.evaluate(() => document.body.innerHTML);
