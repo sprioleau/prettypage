@@ -1,5 +1,18 @@
 import { useState, useRef } from "react";
 import axios from "axios";
+import { useWindowSize } from "react-use";
+import Confetti from "react-confetti";
+
+import Head from "../components/Head";
+import Hero from "../components/Hero";
+import Footer from "../components/Footer";
+import screens from "../utils/screens";
+import useDismissOnOutsideClick from "../hooks/useDismissOnOutsideClick";
+import { TwitterPicker } from "react-color";
+import { BiArrowBack } from "react-icons/bi";
+import { FiDownload } from "react-icons/fi";
+import { CgDarkMode } from "react-icons/cg";
+import saveScreenshot from "../utils/saveScreenshot";
 import {
 	InputGroup,
 	InputLeftAddon,
@@ -16,17 +29,8 @@ import {
 	ButtonGroup,
 	RadioGroup,
 	Radio,
+	useColorMode,
 } from "@chakra-ui/react";
-
-import Head from "../components/Head";
-import Hero from "../components/Hero";
-import Footer from "../components/Footer";
-import screens from "../utils/screens";
-import useDismissOnOutsideClick from "../hooks/useDismissOnOutsideClick";
-import { TwitterPicker } from "react-color";
-import { BiArrowBack } from "react-icons/bi";
-import { FiDownload } from "react-icons/fi";
-import saveScreenshot from "../utils/saveScreenshot";
 
 const defaults = {
 	resolution: {
@@ -35,7 +39,7 @@ const defaults = {
 		value: screens[0].value,
 	},
 	colorMode: "light",
-	color: { hex: "#FCB900" },
+	color: { hex: "#7BDCB5" },
 };
 
 const Home = () => {
@@ -44,8 +48,11 @@ const Home = () => {
 	const [resolution, setResolution] = useState(defaults.resolution);
 	const [colorPickerOpen, setColorPickerOpen] = useState(false);
 	const [color, setColor] = useState(defaults.color);
-	const [colorMode, setColorMode] = useState(defaults.colorMode);
+	const [screenshotColorMode, setScreenshotColorMode] = useState(defaults.colorMode);
 	const [loading, setLoading] = useState(false);
+
+	const { colorMode, toggleColorMode } = useColorMode();
+	const { width, height } = useWindowSize();
 
 	const placeholders = {
 		resolution: "Screenshot resolution",
@@ -54,7 +61,7 @@ const Home = () => {
 
 	const colorPickerRef = useRef(null);
 
-	const options = { url, resolution, color: color.rgb, mode: colorMode };
+	const options = { url, resolution, color: color.rgb, mode: screenshotColorMode };
 
 	const handleChange = (e) => {
 		setUrl(e.target.value);
@@ -96,12 +103,18 @@ const Home = () => {
 			as="div"
 			className="app"
 			direction="column"
-			bgColor="gray.100" /* bgGradient="linear(to-br, #7928CA, #FF0080)" */
+			/* bgColor="gray.100" /* bgGradient="linear(to-br, #7928CA, #FF0080)" */
 		>
 			<Head />
-			<Flex className="app" direction="column" justify="center" height="100vh">
+			<Flex className="app" direction="column" justify="space-between" height="100vh">
+				<Container display="flex" justifyContent="center" my={8}>
+					<Button onClick={toggleColorMode} leftIcon={<CgDarkMode />}>
+						Toggle {colorMode === "light" ? "Dark" : "Light"} Mode
+					</Button>
+				</Container>
+
 				<Box as="main" px={4}>
-					<Container as="section" width="100%" maxW={600} px={8} py={12} boxShadow="xl" p="6" rounded="lg" bg="white">
+					<Container as="section" width="100%" maxW={600} px={8} py={12} boxShadow="xl" p="6" rounded="lg">
 						<Hero />
 						{!data?.base64String ? (
 							<form onSubmit={handleSubmit}>
@@ -109,7 +122,7 @@ const Home = () => {
 									<FormControl id="url-input" isRequired>
 										<InputGroup size="lg">
 											<InputLeftAddon children="http://" />
-											<Input placeholder="mysite" value={url} onChange={handleChange} />
+											<Input placeholder="mysite" value={url} onChange={handleChange} autoFocus />
 										</InputGroup>
 									</FormControl>
 									<FormControl id="resolution">
@@ -119,10 +132,11 @@ const Home = () => {
 											))}
 										</Select>
 									</FormControl>
-									<RadioGroup value={colorMode} onChange={setColorMode}>
+									<RadioGroup value={screenshotColorMode} onChange={setScreenshotColorMode}>
 										<Stack direction="row">
-											<Radio value="light">Light Mode</Radio>
-											<Radio value="dark">Dark Mode</Radio>
+											<Text>Screenshot Color Mode: </Text>
+											<Radio value="light">Light</Radio>
+											<Radio value="dark">Dark</Radio>
 										</Stack>
 									</RadioGroup>
 
@@ -136,7 +150,9 @@ const Home = () => {
 										_hover={{ backgroundColor: color.hex }}
 										_active={{ backgroundColor: color.hex }}
 									>
-										<Text fontSize="md">Select Color</Text>
+										<Text fontSize="md" color="gray.900">
+											Select Color
+										</Text>
 										{colorPickerOpen && (
 											<Box position="absolute" zIndex="5" top="calc(100% + 0.25rem)">
 												<TwitterPicker color={color} onChangeComplete={(color) => handleSelectColor(color)} />
@@ -144,7 +160,14 @@ const Home = () => {
 										)}
 									</Button>
 
-									<Button size="lg" isLoading={loading} loadingText="Prettifying" variant="outline" type="submit">
+									<Button
+										size="lg"
+										isLoading={loading}
+										loadingText="Prettifying"
+										colorScheme="purple"
+										variant="solid"
+										type="submit"
+									>
 										Prettify
 									</Button>
 								</Stack>
@@ -152,6 +175,13 @@ const Home = () => {
 						) : (
 							<Container as="section" width="100%" maxW="unset" px={0}>
 								<Flex align="center" justify="center" direction="column">
+									<Confetti
+										width={width}
+										height={height}
+										numberOfPieces={250}
+										colors={["#f44336", "#e91e63", "#9c27b0", "#673ab7", "#3f51b5", "#2196f3", "#03a9f4", "#00bcd4"]}
+										recycle={false}
+									/>
 									<Image
 										src={`data:image/png;base64,${data.base64String}`}
 										alt={`screenshot of ${url}`}
@@ -171,7 +201,7 @@ const Home = () => {
 										<Button
 											size="lg"
 											leftIcon={<BiArrowBack />}
-											colorScheme="pink"
+											colorScheme="purple"
 											variant="outline"
 											onClick={handleReset}
 											flex="1 1 48%"
@@ -181,7 +211,7 @@ const Home = () => {
 										<Button
 											size="lg"
 											leftIcon={<FiDownload />}
-											colorScheme="pink"
+											colorScheme="purple"
 											variant="solid"
 											onClick={saveScreenshot}
 											style={{ marginLeft: 0 }}
