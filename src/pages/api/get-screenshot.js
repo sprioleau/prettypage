@@ -1,7 +1,19 @@
-import puppeteer from "puppeteer-core";
 import sharp from "sharp";
 import browserConfig from "../../utils/browserConfig";
 
+let chrome = {};
+let puppeteer;
+
+if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
+	// running on the Vercel platform.
+	chrome = require("chrome-aws-lambda");
+	puppeteer = require("puppeteer-core");
+} else {
+	// running locally.
+	puppeteer = require("puppeteer");
+}
+
+// https://github.com/vercel/vercel/discussions/4903
 // https://stackoverflow.com/questions/21227078/convert-base64-to-image-in-javascript-jquery
 
 export default async function handler(req, res) {
@@ -22,10 +34,17 @@ export default async function handler(req, res) {
 
 	const takeScreenshot = async () => {
 		try {
-			const browserFetcher = puppeteer.createBrowserFetcher();
-			const revisionInfo = await browserFetcher.download("848005");
-			const browser = await puppeteer.launch({ executablePath: revisionInfo.executablePath });
+			// const browserFetcher = puppeteer.createBrowserFetcher();
+			// const revisionInfo = await browserFetcher.download("848005");
+			// const browser = await puppeteer.launch({ executablePath: revisionInfo.executablePath });
+
 			// const browser = await puppeteer.launch({ headless: true });
+
+			const browser = await puppeteer.launch({
+				headless: true,
+				ignoreHTTPSErrors: true,
+				executablePath: await chrome.executablePath,
+			});
 
 			const page = await browser.newPage();
 
