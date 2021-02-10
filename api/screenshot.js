@@ -1,14 +1,15 @@
 // import puppeteer from "puppeteer";
 // import chromium from "chrome-aws-lambda";
 import sharp from "sharp";
-import browserConfig from "../../utils/browserConfig";
-// import playwright from "playwright-aws-lambda";
-const playwright = require("playwright-aws-lambda");
+import browserConfig from "../src/utils/browserConfig";
+import playwright from "playwright-aws-lambda";
+// const playwright = require("playwright-aws-lambda");
 
 // https://stackoverflow.com/questions/21227078/convert-base64-to-image-in-javascript-jquery
 // https://github.com/vercel/vercel/discussions/4903
 
 export default async function handler(req, res) {
+	// if (req.method === "GET") res.status(200).send({ message: "hello" }); // Method not allowed;
 	if (req.method !== "POST") res.status(405).end(); // Method not allowed;
 
 	const { url, resolution, color, mode } = req.body.options;

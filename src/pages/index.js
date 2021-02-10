@@ -70,7 +70,7 @@ const Home = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setLoading(true);
-		const response = await axios.post("api/get-screenshot", { options });
+		const response = await axios.post("api/screenshot", { options });
 		const data = await response.data;
 		setLoading(false);
 		setData(data);
