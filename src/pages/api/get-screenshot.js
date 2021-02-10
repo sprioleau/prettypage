@@ -37,7 +37,7 @@ export default async function handler(req, res) {
 
 			await page.goto(cleanedUrl, { waitUntil: "networkidle2" });
 
-			const screenshot = await page.screenshot({ path: "src/images/out/screenshot.png" });
+			const screenshot = await page.screenshot();
 
 			await browser.close();
 
