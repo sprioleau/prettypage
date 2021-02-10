@@ -7,7 +7,7 @@ import Head from "../components/Head";
 import Hero from "../components/Hero";
 import Footer from "../components/Footer";
 import screens from "../utils/screens";
-import useDismissOnOutsideClick from "../hooks/useDismissOnOutsideClick";
+// import useDismissOnOutsideClick from "../hooks/useDismissOnOutsideClick";
 import { TwitterPicker } from "react-color";
 import { BiArrowBack } from "react-icons/bi";
 import { FiDownload } from "react-icons/fi";
@@ -59,7 +59,7 @@ const Home = () => {
 		colorMode: "Color mode",
 	};
 
-	const colorPickerRef = useRef(null);
+	// const colorPickerRef = useRef(null);
 
 	const options = { url, resolution, color: color.rgb, mode: screenshotColorMode };
 
@@ -88,7 +88,7 @@ const Home = () => {
 		setColor(color);
 	};
 
-	useDismissOnOutsideClick(colorPickerRef, colorPickerOpen, () => setColorPickerOpen(false));
+	// useDismissOnOutsideClick(colorPickerRef, colorPickerOpen, () => setColorPickerOpen(false));
 
 	const toggleColorPickerVisibility = () => {
 		setColorPickerOpen(!colorPickerOpen);
