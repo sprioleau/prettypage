@@ -1,7 +1,7 @@
 import sharp from "sharp";
 import browserConfig from "../../utils/browserConfig";
 import chrome from "chrome-aws-lambda";
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
 
 // let chrome = {};
 // let puppeteer;
