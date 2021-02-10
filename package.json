@@ -25,5 +25,7 @@
     "react-use": "^17.1.0",
     "sharp": "^0.27.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "puppeteer-core": "^7.0.4"
+  }
 }
