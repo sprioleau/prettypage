@@ -54,6 +54,8 @@ const Home = () => {
 	const { colorMode, toggleColorMode } = useColorMode();
 	const { width, height } = useWindowSize();
 
+	const home = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://prettypage.netlify.app";
+
 	const placeholders = {
 		resolution: "Screenshot resolution",
 		colorMode: "Color mode",
@@ -62,6 +64,11 @@ const Home = () => {
 	// const colorPickerRef = useRef(null);
 
 	const options = { url, resolution, color: color.rgb, mode: screenshotColorMode };
+	const config = {
+		headers: {
+			"Access-Control-Allow-Headers": "*",
+		},
+	};
 
 	const handleChange = (e) => {
 		setUrl(e.target.value);
@@ -70,7 +77,7 @@ const Home = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setLoading(true);
-		const response = await axios.post("api/screenshot", { options });
+		const response = await axios.post(`${home}/api/screenshot`, { options }, config);
 		const data = await response.data;
 		console.log("data:", data);
 		setLoading(false);

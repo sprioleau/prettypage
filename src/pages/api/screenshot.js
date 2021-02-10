@@ -1,15 +1,16 @@
 // import puppeteer from "puppeteer";
 // import chromium from "chrome-aws-lambda";
-import sharp from "sharp";
-import browserConfig from "../../utils/browserConfig";
+// import sharp from "sharp";
+// import browserConfig from "../../utils/browserConfig";
 import Nightmare from "nightmare";
 
 export default async function handler(req, res) {
 	if (req.method !== "POST") res.status(405).end(); // Method not allowed;
 
-	const { url, resolution, color, mode } = req.body.options;
+	// const { url, resolution, color, mode } = req.body.options;
+	const { url, resolution } = req.body.options;
 
-	const browserFrameFilename = resolution.value;
+	// const browserFrameFilename = resolution.value;
 
 	const defaultOptions = {
 		resolution: { width: 1280, height: 720 },
