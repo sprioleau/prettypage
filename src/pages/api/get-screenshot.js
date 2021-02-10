@@ -22,7 +22,7 @@ export default async function handler(req, res) {
 
 	const takeScreenshot = async () => {
 		try {
-			const browser = await puppeteer.launch();
+			const browser = await puppeteer.launch({ product: "chrome" });
 
 			const page = await browser.newPage();
 
