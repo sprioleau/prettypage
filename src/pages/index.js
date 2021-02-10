@@ -72,6 +72,7 @@ const Home = () => {
 		setLoading(true);
 		const response = await axios.post("api/screenshot", { options });
 		const data = await response.data;
+		console.log("data:", data);
 		setLoading(false);
 		setData(data);
 	};
