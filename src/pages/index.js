@@ -53,7 +53,7 @@ const Home = () => {
 	const { colorMode, toggleColorMode } = useColorMode();
 	const { width, height } = useWindowSize();
 
-	const home = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://prettypage.netlify.app";
+	const home = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://prettypage.vercel.app";
 
 	const placeholders = {
 		resolution: "Screenshot resolution",
