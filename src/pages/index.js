@@ -7,7 +7,6 @@ import Head from "../components/Head";
 import Hero from "../components/Hero";
 import Footer from "../components/Footer";
 import screens from "../utils/screens";
-// import useDismissOnOutsideClick from "../hooks/useDismissOnOutsideClick";
 import { TwitterPicker } from "react-color";
 import { BiArrowBack } from "react-icons/bi";
 import { FiDownload } from "react-icons/fi";
