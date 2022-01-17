@@ -1,16 +1,10 @@
-// import puppeteer from "puppeteer";
-// import chromium from "chrome-aws-lambda";
-// import sharp from "sharp";
-// import browserConfig from "../../utils/browserConfig";
-import Nightmare from "nightmare";
+import browserConfig from "../../utils/browserConfig";
+import chromium from "chrome-aws-lambda";
+import puppeteer from "puppeteer-core";
+import sharp from "sharp";
 
 export default async function handler(req, res) {
-	if (req.method !== "POST") res.status(405).end(); // Method not allowed;
-
-	// const { url, resolution, color, mode } = req.body.options;
-	const { url, resolution } = req.body.options;
-
-	// const browserFrameFilename = resolution.value;
+	const { url, resolution, color, mode } = req.body.options;
 
 	const defaultOptions = {
 		resolution: { width: 1280, height: 720 },
@@ -20,41 +14,43 @@ export default async function handler(req, res) {
 
 	const cleanedUrl = !url.startsWith("http") ? `http://${url}` : url;
 
-	const takeScreenshot = async () => {
-		try {
-			const nightmare = Nightmare({ gotoTimeout: 10000 });
+	const browser = await puppeteer.launch({
+		executablePath: process.env.CHROME_EXECUTABLE_PATH || (await chromium.executablePath),
+		args: [...chromium.args, "--user-agent=puppeteer-screenshot-api"],
+		headless: true,
+		defaultViewport: {
+			width: resolution.width || defaultOptions.resolution.width,
+			height: resolution.height || defaultOptions.resolution.height,
+		},
+	});
 
-			const screenshot = await nightmare
-				.goto(cleanedUrl)
-				.viewport(
-					resolution.width || defaultOptions.resolution.width,
-					resolution.height || defaultOptions.resolution.height
-				)
-				.screenshot();
+	const page = await browser.newPage();
 
-			nightmare.end();
+	await page.goto(cleanedUrl);
 
-			// let image = sharp(`src/images/assets/${browserFrameFilename}${mode === "dark" ? "_dark" : ""}.png`).composite([
-			// 	{ input: screenshot, top: browserConfig.paddingY + browserConfig.toolbarHeight, left: browserConfig.paddingX },
-			// ]);
+	await page.waitForTimeout(2000);
 
-			// if (color) {
-			// 	const { r, g, b } = color;
-			// 	image.flatten({ background: { r, g, b } });
-			// }
+	const screenshot = await page.screenshot({
+		type: "png",
+	});
 
-			// const buffer = await image.toBuffer();
-			// const base64String = buffer.toString("base64");
+	let image = sharp(`src/images/assets/${resolution.value}_${mode}.png`).composite([
+		{
+			input: screenshot,
+			top: browserConfig.paddingY + browserConfig.toolbarHeight,
+			left: browserConfig.paddingX,
+		},
+	]);
 
-			const buffer = Buffer.from(screenshot);
-			const base64String = buffer.toString("base64");
+	if (color) {
+		const { r, g, b } = color;
+		image.flatten({ background: { r, g, b } });
+	}
 
-			res.status(200).json({ base64String });
-		} catch (error) {
-			console.error(error);
-			res.end();
-		}
-	};
+	const buffer = await image.toBuffer();
+	const base64String = buffer.toString("base64");
 
-	await takeScreenshot();
+	await browser.close();
+
+	res.status(200).json({ base64String });
 }
