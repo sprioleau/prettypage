@@ -1,4 +1,4 @@
-import browserConfig from "../../utils/browserConfig";
+import browserConfig from "../utils/browserConfig";
 import chromium from "chrome-aws-lambda";
 import puppeteer from "puppeteer-core";
 import sharp from "sharp";
@@ -34,21 +34,21 @@ export default async function handler(req, res) {
 		type: "png",
 	});
 
-	// let image = sharp(`src/images/assets/${resolution.value}_${mode}.png`).composite([
-	// 	{
-	// 		input: screenshot,
-	// 		top: browserConfig.paddingY + browserConfig.toolbarHeight,
-	// 		left: browserConfig.paddingX,
-	// 	},
-	// ]);
+	let image = sharp(`src/images/assets/${resolution.value}_${mode}.png`).composite([
+		{
+			input: screenshot,
+			top: browserConfig.paddingY + browserConfig.toolbarHeight,
+			left: browserConfig.paddingX,
+		},
+	]);
 
-	// if (color) {
-	// 	const { r, g, b } = color;
-	// 	image.flatten({ background: { r, g, b } });
-	// }
+	if (color) {
+		const { r, g, b } = color;
+		image.flatten({ background: { r, g, b } });
+	}
 
-	const buffer = Buffer.from(screenshot);
-	// const buffer = await image.toBuffer();
+	// const buffer = Buffer.from(screenshot);
+	const buffer = await image.toBuffer();
 	const base64String = buffer.toString("base64");
 
 	await browser.close();

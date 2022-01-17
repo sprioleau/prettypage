@@ -76,7 +76,7 @@ const Home = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setLoading(true);
-		const { data } = await axios.post("/api/screenshot", { options }, config);
+		const { data } = await axios.post("/api/hello?name=ME", { options }, config);
 		setLoading(false);
 		setData(data);
 	};
