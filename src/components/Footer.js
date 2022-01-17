@@ -1,4 +1,4 @@
-import { Box, Container, Link, ListItem, Stack, UnorderedList } from "@chakra-ui/layout";
+import { Box, Container, Link, ListItem, UnorderedList } from "@chakra-ui/layout";
 
 const Footer = () => (
 	<Box as="footer" p="3rem 0">
@@ -28,7 +28,6 @@ const Footer = () => (
 					<Link href="https://github.com/sprioleau" _hover={{ color: "teal" }}>
 						@sprioleau
 					</Link>
-					👨🏾‍💻
 				</ListItem>
 			</UnorderedList>
 		</Container>

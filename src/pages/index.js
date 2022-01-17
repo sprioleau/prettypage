@@ -55,7 +55,7 @@ const Home = () => {
 	const [loading, setLoading] = useState(false);
 
 	const { colorMode, toggleColorMode } = useColorMode();
-	const { width, height } = useWindowSize();
+	const { width: windowWidth, height: windowHeight } = useWindowSize();
 
 	const placeholders = {
 		resolution: "Screenshot resolution",
@@ -76,7 +76,6 @@ const Home = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setLoading(true);
-		console.log("options:", options);
 		const { data } = await axios.post("/api/screenshot", { options }, config);
 		setLoading(false);
 		setData(data);
@@ -195,8 +194,8 @@ const Home = () => {
 						<Container as="section" width="clamp(300px, 90%, 1000px)" maxW="unset" px={6}>
 							<Flex align="center" justify="center" direction="column">
 								<Confetti
-									width={width}
-									height={height}
+									width={windowWidth}
+									height={windowHeight}
 									numberOfPieces={250}
 									colors={["#f44336", "#e91e63", "#9c27b0", "#673ab7", "#3f51b5", "#2196f3", "#03a9f4", "#00bcd4"]}
 									recycle={false}
