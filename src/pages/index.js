@@ -22,7 +22,7 @@ import { CgDarkMode } from "react-icons/cg";
 import Confetti from "react-confetti";
 import { FiDownload } from "react-icons/fi";
 import Footer from "../components/Footer";
-import Head from "../components/Head";
+import Head from "next/head";
 import Hero from "../components/Hero";
 import { TwitterPicker } from "react-color";
 import axios from "axios";
@@ -110,7 +110,9 @@ const Home = () => {
 
 	return (
 		<Flex as="div" className="app" direction="column" bgColor={pageBgColor}>
-			<Head />
+			<Head>
+				<title>Pretty Page</title>
+			</Head>
 			<Flex className="app" direction="column" justify="space-between" height="100vh">
 				<Container display="flex" justifyContent="center" my={8}>
 					<Button onClick={toggleColorMode} leftIcon={<CgDarkMode />} bgColor="gray.300" textColor="gray.900">

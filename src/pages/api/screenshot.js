@@ -26,7 +26,7 @@ export default async function handler(req, res) {
 
 	const page = await browser.newPage();
 
-	await page.goto(cleanedUrl);
+	await page.goto(cleanedUrl, { waitUntil: "networkidle0" });
 
 	await page.waitForTimeout(2000);
 
