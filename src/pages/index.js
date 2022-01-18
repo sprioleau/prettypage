@@ -65,7 +65,7 @@ const Home = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setLoading(true);
-		const { data } = await axios.post("/api/screenshot", options, config);
+		const { data } = await axios.post("/.netlify/functions/screenshot", options, config);
 		setLoading(false);
 		setData(data);
 	};
@@ -237,6 +237,6 @@ const Home = () => {
 			</Flex>
 		</Flex>
 	);
-};
+};;
 
 export default Home;

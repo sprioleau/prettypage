@@ -1,4 +1,4 @@
-export const getTimeStamp = () => {
+const getTimeStamp = () => {
 	const [date, time] = new Date()
 		.toLocaleString()
 		.split(",")
@@ -9,3 +9,5 @@ export const getTimeStamp = () => {
 
 	return `${dateString}_${timeString}`;
 };
+
+export default getTimeStamp;
