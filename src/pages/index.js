@@ -16,6 +16,7 @@ import {
 	Text,
 	useColorMode,
 } from "@chakra-ui/react";
+import { defaultOptions, screens } from "../constants";
 
 import { BiArrowBack } from "react-icons/bi";
 import { CgDarkMode } from "react-icons/cg";
@@ -26,32 +27,20 @@ import Head from "next/head";
 import Hero from "../components/Hero";
 import { TwitterPicker } from "react-color";
 import axios from "axios";
-import { getTimeStamp } from "../utils/getTimeStamp";
+import { getTimeStamp } from "../utils";
 import { saveAs } from "file-saver";
-import screens from "../utils/screens";
 import { useState } from "react";
 import { useWindowSize } from "react-use";
-
-const defaults = {
-	url: "sprioleau.dev",
-	resolution: {
-		width: screens[0].width,
-		height: screens[0].height,
-		value: screens[0].value,
-	},
-	colorMode: "light",
-	color: { rgb: { r: 123, g: 220, b: 181 } },
-};
 
 const getRgbColor = ({ r, g, b }) => `rgb(${r}, ${g}, ${b})`;
 
 const Home = () => {
 	const [data, setData] = useState(null);
-	const [url, setUrl] = useState(defaults.url);
-	const [resolution, setResolution] = useState(defaults.resolution);
+	const [url, setUrl] = useState(defaultOptions.url);
+	const [resolution, setResolution] = useState(defaultOptions.resolution);
 	const [colorPickerOpen, setColorPickerOpen] = useState(false);
-	const [color, setColor] = useState(defaults.color);
-	const [screenshotColorMode, setScreenshotColorMode] = useState(defaults.colorMode);
+	const [color, setColor] = useState(defaultOptions.color);
+	const [screenshotColorMode, setScreenshotColorMode] = useState(defaultOptions.colorMode);
 	const [loading, setLoading] = useState(false);
 
 	const { colorMode, toggleColorMode } = useColorMode();
@@ -76,14 +65,14 @@ const Home = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setLoading(true);
-		const { data } = await axios.post("/api/hello?name=ME", { options }, config);
+		const { data } = await axios.post("/api/screenshot", options, config);
 		setLoading(false);
 		setData(data);
 	};
 
 	const handleSelectResolution = (e) => {
 		const inputValue = e.target.value;
-		if (!inputValue) return setResolution(defaults.resolution);
+		if (!inputValue) return setResolution(defaultOptions.resolution);
 		const { width, height, value } = screens.find((screen) => screen.value === inputValue);
 		setResolution({ width, height, value });
 	};

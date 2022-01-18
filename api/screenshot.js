@@ -1,22 +1,16 @@
-import browserConfig from "../utils/browserConfig";
+import { browserConfig, defaultOptions } from "../src/constants";
+
 import chromium from "chrome-aws-lambda";
+import { getCleanedUrl } from "../src/utils";
 import puppeteer from "puppeteer-core";
 import sharp from "sharp";
 
 export default async function handler(req, res) {
-	const { url, resolution, color, mode } = req.body.options;
-
-	const defaultOptions = {
-		resolution: { width: 1280, height: 720 },
-		color: null,
-		mode: "light",
-	};
-
-	const cleanedUrl = !url.startsWith("http") ? `http://${url}` : url;
+	const { url, resolution, color, mode } = req.body;
 
 	const browser = await puppeteer.launch({
 		executablePath: process.env.CHROME_EXECUTABLE_PATH || (await chromium.executablePath),
-		args: [...chromium.args, "--user-agent=puppeteer-screenshot-api"],
+		args: chromium.args,
 		headless: true,
 		defaultViewport: {
 			width: resolution.width || defaultOptions.resolution.width,
@@ -26,13 +20,10 @@ export default async function handler(req, res) {
 
 	const page = await browser.newPage();
 
-	await page.goto(cleanedUrl, { waitUntil: "networkidle0" });
-
+	await page.goto(getCleanedUrl(url), { waitUntil: "networkidle0" });
 	await page.waitForTimeout(2000);
 
-	const screenshot = await page.screenshot({
-		type: "png",
-	});
+	const screenshot = await page.screenshot({ type: "png" });
 
 	let image = sharp(`src/images/assets/${resolution.value}_${mode}.png`).composite([
 		{
@@ -47,7 +38,6 @@ export default async function handler(req, res) {
 		image.flatten({ background: { r, g, b } });
 	}
 
-	// const buffer = Buffer.from(screenshot);
 	const buffer = await image.toBuffer();
 	const base64String = buffer.toString("base64");
 

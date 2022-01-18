@@ -3,7 +3,7 @@ import browserConfig from "../utils/browserConfig";
 import sharp from "sharp";
 
 export default async function handler(req, res) {
-	const { url, resolution, color, mode } = req.body.options;
+	const { url, resolution, color, mode } = req.body;
 
 	const defaultOptions = {
 		resolution: { width: 1280, height: 720 },
