@@ -17,6 +17,7 @@ import {
 	useColorMode,
 } from "@chakra-ui/react";
 import { defaultOptions, screens } from "../constants";
+import { getRgbColor, getTimeStamp } from "../utils";
 
 import { BiArrowBack } from "react-icons/bi";
 import { CgDarkMode } from "react-icons/cg";
@@ -27,12 +28,9 @@ import Head from "next/head";
 import Hero from "../components/Hero";
 import { TwitterPicker } from "react-color";
 import axios from "axios";
-import { getTimeStamp } from "../utils";
 import { saveAs } from "file-saver";
 import { useState } from "react";
 import { useWindowSize } from "react-use";
-
-const getRgbColor = ({ r, g, b }) => `rgb(${r}, ${g}, ${b})`;
 
 const Home = () => {
 	const [data, setData] = useState(null);
@@ -51,11 +49,13 @@ const Home = () => {
 		colorMode: "Color mode",
 	};
 
-	const options = { url, resolution, color: color.rgb, mode: screenshotColorMode };
-	const config = {
-		headers: {
-			"Access-Control-Allow-Headers": "*",
-		},
+	const options = {
+		url,
+		width: resolution.width,
+		height: resolution.height,
+		value: resolution.value,
+		rgb: Object.values(color.rgb).join(","),
+		mode: screenshotColorMode,
 	};
 
 	const handleChange = (e) => {
@@ -65,7 +65,7 @@ const Home = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setLoading(true);
-		const { data } = await axios.post("/.netlify/functions/screenshot", options, config);
+		const { data } = await axios.post(`/api/screenshot`, options);
 		setLoading(false);
 		setData(data);
 	};
@@ -91,7 +91,7 @@ const Home = () => {
 
 	const handleDownload = () => {
 		if (!data) return;
-		saveAs(`data:image/png;base64,${data.base64String}`, `pretty-page-screenshot_${getTimeStamp()}.png`);
+		saveAs(data.imageUrl, `pretty-page-screenshot_${getTimeStamp()}.png`);
 	};
 
 	const pageBgColor = colorMode === "light" ? "gray.100" : "gray.900";
@@ -109,7 +109,8 @@ const Home = () => {
 				</Container>
 
 				<Box as="main" px={4} bgColor={pageBgColor}>
-					{!data?.base64String ? (
+					{/* {data && <pre>{JSON.stringify(data.body, null, 2)}</pre>} */}
+					{!data?.imageUrl ? (
 						<Container
 							as="section"
 							width="100%"
@@ -190,8 +191,8 @@ const Home = () => {
 									recycle={false}
 								/>
 								<Image
-									src={`data:image/png;base64,${data.base64String}`}
-									alt={`screenshot of ${url}`}
+									src={data.imageUrl}
+									alt="screenshot"
 									width="100%"
 									height="auto"
 									display="block"
@@ -237,6 +238,6 @@ const Home = () => {
 			</Flex>
 		</Flex>
 	);
-};;
+};
 
 export default Home;
