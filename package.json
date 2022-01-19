@@ -5,18 +5,17 @@
 	"scripts": {
 		"dev": "next dev",
 		"build": "next build",
-		"start": "next start",
-		"export": "next export"
+		"start": "next start"
 	},
 	"dependencies": {
-		"chrome-aws-lambda": "^10.1.0",
-		"next": "^12.0.8",
-		"puppeteer-core": "^13.1.1",
-		"react": "17.0.1",
-		"react-dom": "17.0.1",
+		"axios": "^0.25.0",
+		"chrome-aws-lambda": "7.0.0",
+		"puppeteer-core": "8.0.0",
 		"sharp": "^0.27.1"
 	},
 	"devDependencies": {
-		"puppeteer": "^13.1.1"
+		"next": "^12.0.8",
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2"
 	}
 }
