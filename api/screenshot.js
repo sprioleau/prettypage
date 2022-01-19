@@ -9,7 +9,8 @@ const browserConfig = {
 };
 
 export default async function handler(req, res) {
-	const { url, height, width, value, mode, rgb } = req.body;
+	const { url, height, width, value, mode, rgb } = JSON.parse(req.body);
+	// const { url, height, width, value, mode, rgb } = req.body;
 
 	let browser = null;
 	let page = null;
@@ -18,7 +19,8 @@ export default async function handler(req, res) {
 
 	try {
 		browser = await puppeteer.launch({
-			executablePath: process.env.CHROME_EXECUTABLE_PATH || (await chromium.executablePath),
+			executablePath: await chromium.executablePath,
+			// executablePath: process.env.CHROME_EXECUTABLE_PATH || (await chromium.executablePath),
 			args: chromium.args,
 			headless: true,
 			defaultViewport: {
