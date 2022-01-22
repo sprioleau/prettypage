@@ -33,7 +33,7 @@ import { useState } from "react";
 import { useWindowSize } from "react-use";
 
 const Home = () => {
-	const [data, setData] = useState(null);
+	const [imageUrl, setImageUrl] = useState(null);
 	const [url, setUrl] = useState(defaultOptions.url);
 	const [resolution, setResolution] = useState(defaultOptions.resolution);
 	const [colorPickerOpen, setColorPickerOpen] = useState(false);
@@ -65,9 +65,17 @@ const Home = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setLoading(true);
-		const { data } = await axios.post(`/api/screenshot`, options);
+
+		const {
+			data: { base64String },
+		} = await axios.post(`/api/screenshot`, options);
+
+		const {
+			data: { imageUrl: imageUrlFromApi },
+		} = await axios.post(`/api/overlay`, { base64String });
+
 		setLoading(false);
-		setData(data);
+		setImageUrl(imageUrlFromApi);
 	};
 
 	const handleSelectResolution = (e) => {
@@ -86,12 +94,12 @@ const Home = () => {
 	};
 
 	const handleReset = () => {
-		setData({});
+		setImageUrl({});
 	};
 
 	const handleDownload = () => {
-		if (!data) return;
-		saveAs(data.imageUrl, `pretty-page-screenshot_${getTimeStamp()}.png`);
+		if (!imageUrl) return;
+		saveAs(imageUrl, `pretty-page-screenshot_${getTimeStamp()}.png`);
 	};
 
 	const pageBgColor = colorMode === "light" ? "gray.100" : "gray.900";
@@ -110,7 +118,7 @@ const Home = () => {
 
 				<Box as="main" px={4} bgColor={pageBgColor}>
 					{/* {data && <pre>{JSON.stringify(data.body, null, 2)}</pre>} */}
-					{!data?.imageUrl ? (
+					{!imageUrl ? (
 						<Container
 							as="section"
 							width="100%"
@@ -191,7 +199,7 @@ const Home = () => {
 									recycle={false}
 								/>
 								<Image
-									src={data.imageUrl}
+									src={imageUrl}
 									alt="screenshot"
 									width="100%"
 									height="auto"
