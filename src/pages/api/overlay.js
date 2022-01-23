@@ -34,7 +34,7 @@ export default async function handler(req, res) {
 
 		res.status(200).json({
 			imageUrl,
-			error: "Whoa there. We had an error.",
+			error: null,
 		});
 	} catch (error) {
 		console.error(error);
