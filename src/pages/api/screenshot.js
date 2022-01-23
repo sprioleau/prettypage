@@ -12,7 +12,15 @@ export default async function handler(req, res) {
 	try {
 		browser = await puppeteer.launch({
 			executablePath: await chromium.executablePath,
-			args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-gpu", "--no-zygote"],
+			args: [
+				"--disable-gpu",
+				"--disable-dev-shm-usage",
+				"--disable-setuid-sandbox",
+				"--no-first-run",
+				"--no-sandbox",
+				"--no-zygote",
+				"--single-process",
+			],
 			headless: true,
 			defaultViewport: {
 				width,
