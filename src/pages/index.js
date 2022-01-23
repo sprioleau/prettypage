@@ -5,16 +5,18 @@ import {
 	Container,
 	Flex,
 	FormControl,
+	FormErrorMessage,
+	FormLabel,
 	Image,
 	Input,
 	InputGroup,
-	InputLeftAddon,
 	Radio,
 	RadioGroup,
 	Select,
 	Stack,
 	Text,
 	useColorMode,
+	useToast,
 } from "@chakra-ui/react";
 import { defaultOptions, screens } from "../constants";
 import { getRgbColor, getTimeStamp } from "../utils";
@@ -40,6 +42,11 @@ const Home = () => {
 	const [color, setColor] = useState(defaultOptions.color);
 	const [screenshotColorMode, setScreenshotColorMode] = useState(defaultOptions.colorMode);
 	const [loading, setLoading] = useState(false);
+	const toast = useToast({
+		position: "top",
+		status: "error",
+		isClosable: true,
+	});
 
 	const { colorMode, toggleColorMode } = useColorMode();
 	const { width: windowWidth, height: windowHeight } = useWindowSize();
@@ -50,12 +57,16 @@ const Home = () => {
 	};
 
 	const options = {
-		url,
-		width: resolution.width,
-		height: resolution.height,
-		value: resolution.value,
-		rgb: Object.values(color.rgb).join(","),
-		mode: screenshotColorMode,
+		screenshot: {
+			url,
+			width: Number(resolution.width),
+			height: Number(resolution.height),
+		},
+		overlay: {
+			value: resolution.value,
+			rgb: Object.values(color.rgb).join(","),
+			mode: screenshotColorMode,
+		},
 	};
 
 	const handleChange = (e) => {
@@ -66,16 +77,28 @@ const Home = () => {
 		e.preventDefault();
 		setLoading(true);
 
+		// Serverless function uses puppeteer to take screenshot
 		const {
-			data: { base64String },
-		} = await axios.post(`/api/screenshot`, options);
+			data: { base64String, error: screenshotError },
+		} = await axios.post(`/api/screenshot`, options.screenshot);
 
+		if (screenshotError) {
+			setLoading(false);
+			return toast({ title: screenshotError });
+		}
+
+		// Serverless function uses sharp to overlay background color and browser
 		const {
-			data: { imageUrl: imageUrlFromApi },
-		} = await axios.post(`/api/overlay`, { base64String });
+			data: { imageUrl, error: overlayError },
+		} = await axios.post(`/api/overlay`, { base64String, ...options.overlay });
+
+		if (overlayError) {
+			setLoading(false);
+			return toast({ title: overlayError });
+		}
 
 		setLoading(false);
-		setImageUrl(imageUrlFromApi);
+		setImageUrl(imageUrl);
 	};
 
 	const handleSelectResolution = (e) => {
@@ -84,6 +107,10 @@ const Home = () => {
 		const { width, height, value } = screens.find((screen) => screen.value === inputValue);
 		setResolution({ width, height, value });
 	};
+
+	const urlRegex = /[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/gi;
+	const regexValid = urlRegex.test(url);
+	const showUrlInvalidState = !regexValid && url.length > 3;
 
 	const handleSelectColor = (color) => {
 		setColor(color);
@@ -94,7 +121,7 @@ const Home = () => {
 	};
 
 	const handleReset = () => {
-		setImageUrl({});
+		setImageUrl("");
 	};
 
 	const handleDownload = () => {
@@ -117,7 +144,6 @@ const Home = () => {
 				</Container>
 
 				<Box as="main" px={4} bgColor={pageBgColor}>
-					{/* {data && <pre>{JSON.stringify(data.body, null, 2)}</pre>} */}
 					{!imageUrl ? (
 						<Container
 							as="section"
@@ -134,11 +160,18 @@ const Home = () => {
 							<form onSubmit={handleSubmit}>
 								<Stack spacing={4} my={6}>
 									<Hero />
-									<FormControl id="url-input" isRequired>
+									<FormControl id="url-input" isRequired isInvalid={showUrlInvalidState}>
+										<FormLabel htmlFor="url-input">URL</FormLabel>
 										<InputGroup size="lg">
-											<InputLeftAddon children="http://" />
-											<Input placeholder="mysite" value={url} onChange={handleChange} autoFocus />
+											<Input
+												placeholder="https://sprioleau.dev"
+												value={url}
+												onChange={handleChange}
+												autoFocus
+												spellCheck={false}
+											/>
 										</InputGroup>
+										{showUrlInvalidState ? <FormErrorMessage>Please enter a valid URL</FormErrorMessage> : null}
 									</FormControl>
 									<FormControl id="resolution">
 										<Select size="lg" placeholder={placeholders.resolution} onChange={handleSelectResolution}>
@@ -189,7 +222,7 @@ const Home = () => {
 							</form>
 						</Container>
 					) : (
-						<Container as="section" width="clamp(300px, 90%, 1000px)" maxW="unset" px={6}>
+						<Container as="section" width="clamp(300px, 90%, 1000px)" maxW="unset" px={6} mb={12}>
 							<Flex align="center" justify="center" direction="column">
 								<Confetti
 									width={windowWidth}
