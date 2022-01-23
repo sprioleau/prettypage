@@ -6,9 +6,7 @@ export default async function handler(req, res) {
 	const [r, g, b] = rgb.split(",");
 
 	// prettier-ignore
-	const home = process.env.NODE_ENV === "development"
-		? "http://localhost:3000"
-		: "https://prettypage-sprioleau.vercel.app";
+	const home = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://prettypage.vercel.app";
 
 	const { data: overlayImageArrayBuffer } = await axios.get(`${home}/images/${value}_${mode}.png`, {
 		responseType: "arraybuffer",
