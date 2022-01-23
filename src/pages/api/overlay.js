@@ -2,42 +2,41 @@ import axios from "axios";
 import sharp from "sharp";
 
 export default async function handler(req, res) {
-	const { base64String } = req.body;
+	const { base64String, value, rgb, mode } = req.body;
+	const [r, g, b] = rgb.split(",");
 
-	const rgb = "210,111,181";
+	// prettier-ignore
+	const home = process.env.NODE_ENV === "development"
+		? "http://localhost:3000"
+		: "https://prettypage-sprioleau.vercel.app";
 
-	// TODO: Update home page, determine the absolute path is necessary
-	// const home =
-	// 	process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://prettypage-sprioleau.vercel.app";
+	const { data: overlayImageArrayBuffer } = await axios.get(`${home}/images/${value}_${mode}.png`, {
+		responseType: "arraybuffer",
+	});
 
-	// TODO: Destructure the BASE64 string
-	const { data: overlayImage } = await axios.get("/images/assets/image.png", { responseType: "arraybuffer" });
-
-	// TODO: Investigate getting the buffer from the request to minimize response times
-	const sharpImage = Buffer.from(overlayImage, "base64");
+	const overlayImage = Buffer.from(overlayImageArrayBuffer, "base64");
 	const screenshot = Buffer.from(base64String, "base64");
 
 	try {
-		let image = sharp(sharpImage).composite([
-			{
-				input: screenshot,
-				top: 170,
-				left: 150,
-			},
-		]);
+		const image = sharp(overlayImage)
+			.composite([
+				{
+					input: screenshot,
+					top: 170,
+					left: 150,
+				},
+			])
+			.flatten({
+				background: { r, g, b },
+			});
 
-		if (rgb) {
-			const [r, g, b] = rgb.split(",");
-			image.flatten({ background: { r, g, b } });
-		}
-
-		// TODO: Can I use image.toString("base64")?
-		const buffer2 = await image.toBuffer();
-		const base64String2 = buffer2.toString("base64");
-		const imageUrl = `data:image/png;base64,${base64String2}`;
+		const buffer = await image.toBuffer();
+		const overlayBase64String = buffer.toString("base64");
+		const imageUrl = `data:image/png;base64,${overlayBase64String}`;
 
 		res.status(200).json({
 			imageUrl,
+			error: "Whoa there. We had an error.",
 		});
 	} catch (error) {
 		console.error(error);
