@@ -39,6 +39,15 @@ export default async function handler(req, res) {
 		if (page) await page.close();
 		if (browser) await browser.close();
 
+		const sizeInBytes = base64String * (3 / 4) - 2;
+
+		if (sizeInBytes > 1000000) {
+			res.status(413).json({
+				base64String: null,
+				error: "Image is too large",
+			});
+		}
+
 		res.status(200).json({
 			base64String,
 			error: null,
@@ -48,15 +57,6 @@ export default async function handler(req, res) {
 
 		if (page) await page.close();
 		if (browser) await browser.close();
-
-		const sizeInBytes = base64String * (3 / 4) - 2;
-
-		if (sizeInBytes > 1000000) {
-			res.status(413).json({
-				base64String: null,
-				error: "Image is too large",
-			});
-		}
 
 		res.status(500).json({
 			base64String: null,
