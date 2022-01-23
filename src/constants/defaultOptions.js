@@ -1,7 +1,7 @@
 import screens from "./screens";
 
 const defaultOptions = {
-	url: "sprioleau.dev",
+	url: "",
 	resolution: {
 		width: screens[0].width,
 		height: screens[0].height,

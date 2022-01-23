@@ -1,16 +1,8 @@
 import chromium from "chrome-aws-lambda";
 import puppeteer from "puppeteer-core";
-import sharp from "sharp";
-
-const browserConfig = {
-	paddingX: 150,
-	paddingY: 120,
-	toolbarHeight: 50,
-};
 
 export default async function handler(req, res) {
-	const { url, height, width, value, mode, rgb } = JSON.parse(req.body);
-	// const { url, height, width, value, mode, rgb } = req.body;
+	const { url, width, height } = req.body;
 
 	let browser = null;
 	let page = null;
@@ -20,43 +12,36 @@ export default async function handler(req, res) {
 	try {
 		browser = await puppeteer.launch({
 			executablePath: await chromium.executablePath,
-			// executablePath: process.env.CHROME_EXECUTABLE_PATH || (await chromium.executablePath),
-			args: chromium.args,
+			args: [
+				"--disable-gpu",
+				"--disable-dev-shm-usage",
+				"--disable-setuid-sandbox",
+				"--no-first-run",
+				"--no-sandbox",
+				"--no-zygote",
+				"--single-process",
+			],
 			headless: true,
 			defaultViewport: {
-				width: Number(width),
-				height: Number(height),
+				width,
+				height,
 			},
 		});
 
 		page = await browser.newPage();
-
 		await page.goto(cleanedUrl, { waitUntil: "networkidle2" });
 		await page.waitForTimeout(2000);
 
 		const screenshot = await page.screenshot({ type: "png" });
-
-		let image = sharp(`src/images/assets/${value}_${mode}.png`).composite([
-			{
-				input: screenshot,
-				top: browserConfig.paddingY + browserConfig.toolbarHeight,
-				left: browserConfig.paddingX,
-			},
-		]);
-
-		if (rgb) {
-			const [r, g, b] = rgb.split(",");
-			image.flatten({ background: { r, g, b } });
-		}
-
-		const buffer = await image.toBuffer();
+		const buffer = Buffer.from(screenshot);
 		const base64String = buffer.toString("base64");
 
 		if (page) await page.close();
 		if (browser) await browser.close();
 
 		res.status(200).json({
-			imageUrl: `data:image/png;base64,${base64String}`,
+			base64String,
+			error: null,
 		});
 	} catch (error) {
 		console.error(error);
@@ -64,9 +49,17 @@ export default async function handler(req, res) {
 		if (page) await page.close();
 		if (browser) await browser.close();
 
-		res.status(500).json({
-			imageUrl: null,
+		const sizeInBytes = base64String * (3 / 4) - 2;
 
+		if (sizeInBytes > 1000000) {
+			res.status(413).json({
+				base64String: null,
+				error: "Image is too large",
+			});
+		}
+
+		res.status(500).json({
+			base64String: null,
 			error: error.message,
 		});
 	}
