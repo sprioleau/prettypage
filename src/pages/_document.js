@@ -1,7 +1,7 @@
 import NextDocument, { Head, Html, Main, NextScript } from "next/document";
 
-// import { ColorModeScript } from "@chakra-ui/react";
-// import theme from "../theme/theme";
+import { ColorModeScript } from "@chakra-ui/react";
+import theme from "../theme/theme";
 
 export default class Document extends NextDocument {
 	render() {
@@ -24,7 +24,7 @@ export default class Document extends NextDocument {
 					<link rel="icon" href="/favicon.png" />
 				</Head>
 				<body>
-					{/* <ColorModeScript initialColorMode={theme.config.initialColorMode} /> */}
+					<ColorModeScript initialColorMode={theme.config.initialColorMode} />
 					<Main />
 					<NextScript />
 				</body>
