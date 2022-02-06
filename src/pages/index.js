@@ -18,8 +18,8 @@ import {
 	useColorMode,
 	useToast,
 } from "@chakra-ui/react";
-import { defaultOptions, screens } from "../constants";
-import { getRgbColor, getTimeStamp } from "../utils";
+import { defaultOptions, exampleUrls, screens } from "../constants";
+import { getRgbColor, getTimeStamp, pickRandomFromArray } from "../utils";
 
 import { BiArrowBack } from "react-icons/bi";
 import { CgDarkMode } from "react-icons/cg";
@@ -69,11 +69,19 @@ const Home = () => {
 		},
 	};
 
+	const randomOptions = {
+		...options,
+		screenshot: {
+			...options.screenshot,
+			url: pickRandomFromArray(exampleUrls),
+		},
+	};
+
 	const handleChange = (e) => {
 		setUrl(e.target.value);
 	};
 
-	const handleSubmit = async (e) => {
+	const handleSubmit = async (e, options) => {
 		e.preventDefault();
 		setLoading(true);
 		setImageUrl(null);
@@ -158,7 +166,7 @@ const Home = () => {
 							border="1px solid"
 							borderColor="gray.400"
 						>
-							<form onSubmit={handleSubmit}>
+							<form onSubmit={(e) => handleSubmit(e, options)}>
 								<Stack spacing={4} my={6}>
 									<Hero />
 									<FormControl id="url-input" isRequired isInvalid={showUrlInvalidState} isDisabled={loading}>
@@ -221,6 +229,20 @@ const Home = () => {
 									>
 										Prettify
 									</Button>
+									<Text
+										fontSize="lg"
+										colorScheme="purple"
+										opacity={0.8}
+										textAlign="center"
+										_hover={{
+											color: "purple.200",
+											cursor: "pointer",
+											opacity: 1,
+										}}
+										onClick={(e) => handleSubmit(e, randomOptions)}
+									>
+										or see an example
+									</Text>
 								</Stack>
 							</form>
 						</Container>

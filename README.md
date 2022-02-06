@@ -80,7 +80,7 @@ Then, re-run `yarn dev` to start the dev server.
 ## ⬆️ Future Updates
 
 - [ ] Retry screenshot on timeout
-- [ ] Add some example sites for quick app demos
+- [x] Add some example sites for quick app demos
 - [x] Capture another screenshot from success page
 
 ## 👨🏾‍💻 Author
