@@ -10,7 +10,7 @@ export default async function handler(req, res) {
 		? "http://localhost:3000"
 		: "https://prettypage.vercel.app";
 
-	const { data: overlayImageArrayBuffer } = await axios.get(`${home}/images/${value}_${mode}.png`, {
+	const { data: overlayImageArrayBuffer } = await axios.get(`${home}/images/browsers/${value}_${mode}.png`, {
 		responseType: "arraybuffer",
 	});
 
