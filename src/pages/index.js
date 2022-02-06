@@ -76,6 +76,7 @@ const Home = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setLoading(true);
+		setImageUrl(null);
 
 		// Serverless function uses puppeteer to take screenshot
 		const {
@@ -136,8 +137,8 @@ const Home = () => {
 			<Head>
 				<title>Pretty Page</title>
 			</Head>
-			<Flex className="app" direction="column" justify="space-between" height="100vh">
-				<Container display="flex" justifyContent="center" my={8}>
+			<Flex className="app" direction="column" justify="space-between" minHeight="100vh">
+				<Container display="flex" justifyContent="center" my={8} mb={4}>
 					<Button onClick={toggleColorMode} leftIcon={<CgDarkMode />} bgColor="gray.300" textColor="gray.900">
 						Toggle {colorMode === "light" ? "Dark" : "Light"} Mode
 					</Button>
@@ -152,7 +153,7 @@ const Home = () => {
 							boxShadow="xl"
 							p={8}
 							borderRadius="xl"
-							mb={24}
+							mb={12}
 							bgColor={colorMode === "light" ? "white" : "gray.900"}
 							border="1px solid"
 							borderColor="gray.400"
@@ -247,6 +248,7 @@ const Home = () => {
 									display="flex"
 									flexWrap="wrap"
 									style={{ gap: "1rem" }}
+									mb={4}
 									width="100%"
 									justifyContent="center"
 								>
@@ -260,6 +262,26 @@ const Home = () => {
 									>
 										Return Home
 									</Button>
+
+									<Button
+										size="lg"
+										colorScheme="purple"
+										variant="outline"
+										onClick={handleSubmit}
+										style={{ marginLeft: 0 }}
+										color="purple.200"
+										flex="1 1 48%"
+									>
+										Retake Screenshot
+									</Button>
+								</ButtonGroup>
+								<ButtonGroup
+									display="flex"
+									flexWrap="wrap"
+									style={{ gap: "1rem" }}
+									width="100%"
+									justifyContent="center"
+								>
 									<Button
 										size="lg"
 										leftIcon={<FiDownload />}
