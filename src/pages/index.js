@@ -160,7 +160,7 @@ const Home = () => {
 							<form onSubmit={handleSubmit}>
 								<Stack spacing={4} my={6}>
 									<Hero />
-									<FormControl id="url-input" isRequired isInvalid={showUrlInvalidState}>
+									<FormControl id="url-input" isRequired isInvalid={showUrlInvalidState} isDisabled={loading}>
 										<FormLabel htmlFor="url-input">URL</FormLabel>
 										<InputGroup size="lg">
 											<Input
@@ -173,14 +173,14 @@ const Home = () => {
 										</InputGroup>
 										{showUrlInvalidState ? <FormErrorMessage>Please enter a valid URL</FormErrorMessage> : null}
 									</FormControl>
-									<FormControl id="resolution">
+									<FormControl id="resolution" isDisabled={loading}>
 										<Select size="lg" placeholder={placeholders.resolution} onChange={handleSelectResolution}>
 											{screens.map(({ label, value, resolution }) => (
 												<option key={label} value={value}>{`${value} (${resolution})`}</option>
 											))}
 										</Select>
 									</FormControl>
-									<RadioGroup value={screenshotColorMode} onChange={setScreenshotColorMode}>
+									<RadioGroup value={screenshotColorMode} onChange={setScreenshotColorMode} isDisabled={loading}>
 										<Stack direction="row">
 											<Text>Screenshot Color Mode: </Text>
 											<Radio value="light">Light</Radio>
@@ -197,6 +197,7 @@ const Home = () => {
 										onClick={toggleColorPickerVisibility}
 										_hover={{ backgroundColor: getRgbColor(color.rgb) }}
 										_active={{ backgroundColor: getRgbColor(color.rgb) }}
+										isDisabled={loading}
 									>
 										<Text fontSize="md" color="gray.900">
 											Select Color
@@ -211,6 +212,7 @@ const Home = () => {
 									<Button
 										size="lg"
 										isLoading={loading}
+										isDisabled={loading}
 										loadingText="Prettifying"
 										colorScheme="purple"
 										variant="solid"
