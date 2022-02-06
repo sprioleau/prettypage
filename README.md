@@ -38,6 +38,28 @@ Run developemnt server
 yarn dev
 ```
 
+<details>
+<summary>Dealing with common install error</summary>
+
+If you see the following error, you'll need to install a version of Chromium for the app to use. 
+
+>_Error: Could not find expected browser (chrome) locally. Run `npm install` to download the correct Chromium revision (884014)._
+
+To resolve, make sure you've run `yarn install` and run:
+
+```bash
+node node_modules/puppeteer-core/install.js
+```
+
+You should see something like: 
+
+```bash
+Downloading Chromium r884014 - 113.6 Mb [==============      ] 71% 3.1s 
+```
+
+Then, re-run `yarn dev` to start the dev server.
+</details>
+
 ## 🛠 Built With
 
 | Technology            | Used For                            |
@@ -59,7 +81,7 @@ yarn dev
 
 - [ ] Retry screenshot on timeout
 - [ ] Add some example sites for quick app demos
-- [ ] Capture another screenshot from success page
+- [x] Capture another screenshot from success page
 
 ## 👨🏾‍💻 Author
 
