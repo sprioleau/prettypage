@@ -1,34 +1,92 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+![Social Card][social-card-url]
 
-## Getting Started
+![Vercel Status](https://img.shields.io/github/deployments/sprioleau/prettypage/production?label=vercel&logo=vercel&style=for-the-badge)
 
-First, run the development server:
+# Pretty Page
+
+Take pixel-perfect screenshots of any website. This project employs serverless functions to handle creating a customizable webpage screenshot. It uses a headless browser to take a screenshot and composites it with custom graphics and a user-selected background color.
+
+## 🔗 Links
+
+- 🚀 Deployed at [prettypage.vercel.app][deployed-url]
+
+## Screenshots
+
+![Homepage Screenshot][homepage-screenshot-url] 
+
+![Color Page Screenshot][success-page-screenshot-url] 
+
+_Screenshots via [Pretty Page](https://prettypage.vercel.app/)_
+
+## 💿 Installation
+
+Clone this repo
 
 ```bash
-npm run dev
-# or
+git clone https://github.com/sprioleau/prettypage.git
+```
+
+Install via yarn
+
+```bash
+yarn install
+```
+
+Run developemnt server
+
+```bash
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠 Built With
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+| Technology            | Used For                            |
+| :-------------------- | :--------------------------------   |
+| JavaScript            | -                                   |
+| Next.js               | Static site generation              |
+| Puppeteer             | Controlling headless Chrome browser |
+| Chrome AWS Lambda     | Chrome binary                       |
+| Sharp                 | Image processing                    |
+| Chakra UI             | 😍 UI Framework for React           |
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+## ✨ Features
+- [x] Takes website screenshots with headless browser
+- [x] Waits for idle network before screenshot capture
+- [x] Custom-designed browser window mock-ups by resolution
+- [x] Dark mode toggle
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## ⬆️ Future Updates
 
-## Learn More
+- [ ] Retry screenshot on timeout
+- [ ] Add some example sites for quick app demos
+- [ ] Capture another screenshot from success page
 
-To learn more about Next.js, take a look at the following resources:
+## 👨🏾‍💻 Author
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**San'Quan Prioleau**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- [Profile][github-url]
+- [Website][website]
+- [LinkedIn][linkedin]
 
-## Deploy on Vercel
+## 🎗 Support
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Issues, and feature requests are welcome!
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Give a ⭐️ if you like this project!
+
+## Acknowledgements
+
+- Inspired by [screen.guru](https://screen.guru)
+
+<!-- Author Details -->
+[github-url]: https://github.com/spriolau "San'Quan Prioleau on Github"
+[website]: https://sprioleau.dev "San'Quan Prioleau's personal website"
+[linkedin]: https://www.linkedin.com/in/sanquanprioleau/
+[headshot_url]: https://avatars.githubusercontent.com/u/49278940?v=4 "San'Quan Prioleau headshot"
+
+<!-- Project Details -->
+[deployed-url]: https://prettypage.vercel.app
+[social-card-url]: https://prettypage.vercel.app/images/pretty-page-social-card.png "Social Card"
+[homepage-screenshot-url]: https://prettypage.vercel.app/images/screenshots/homepage.png "Homepage Screenshot"
+[success-page-screenshot-url]: https://prettypage.vercel.app/images/screenshots/success-page.gif "Success Page GIF"
