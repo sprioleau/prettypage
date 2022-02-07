@@ -28,6 +28,7 @@ import { FiDownload } from "react-icons/fi";
 import Footer from "../components/Footer";
 import Head from "next/head";
 import Hero from "../components/Hero";
+import { RiScreenshot2Line } from "react-icons/ri";
 import { TwitterPicker } from "react-color";
 import axios from "axios";
 import { saveAs } from "file-saver";
@@ -288,6 +289,7 @@ const Home = () => {
 									<Button
 										size="lg"
 										colorScheme="purple"
+										leftIcon={<RiScreenshot2Line />}
 										variant="outline"
 										onClick={handleSubmit}
 										style={{ marginLeft: 0 }}
