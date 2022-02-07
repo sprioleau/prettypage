@@ -19,7 +19,7 @@ import {
 	useToast,
 } from "@chakra-ui/react";
 import { defaultOptions, exampleUrls, screens } from "../constants";
-import { getRgbColor, getTimeStamp, pickRandomFromArray } from "../utils";
+import { fetchData, getRgbColor, getTimeStamp, pickRandomFromArray } from "../utils";
 
 import { BiArrowBack } from "react-icons/bi";
 import { CgDarkMode } from "react-icons/cg";
@@ -30,7 +30,6 @@ import Head from "next/head";
 import Hero from "../components/Hero";
 import { RiScreenshot2Line } from "react-icons/ri";
 import { TwitterPicker } from "react-color";
-import axios from "axios";
 import { saveAs } from "file-saver";
 import { useState } from "react";
 import { useWindowSize } from "react-use";
@@ -90,7 +89,7 @@ const Home = () => {
 		// Serverless function uses puppeteer to take screenshot
 		const {
 			data: { base64String, error: screenshotError },
-		} = await axios.post(`/api/screenshot`, options.screenshot);
+		} = await fetchData("/api/screenshot", options.screenshot);
 
 		if (screenshotError) {
 			setLoading(false);
@@ -100,7 +99,7 @@ const Home = () => {
 		// Serverless function uses sharp to overlay background color and browser
 		const {
 			data: { imageUrl, error: overlayError },
-		} = await axios.post(`/api/overlay`, { base64String, ...options.overlay });
+		} = await fetchData(`/api/overlay`, { base64String, ...options.overlay });
 
 		if (overlayError) {
 			setLoading(false);
