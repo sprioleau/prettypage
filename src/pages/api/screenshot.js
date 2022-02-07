@@ -32,7 +32,16 @@ export default async function handler(req, res) {
 		await page.goto(cleanedUrl, { waitUntil: "networkidle2" });
 		await page.waitForTimeout(2000);
 
-		const screenshot = await page.screenshot({ type: "png" });
+		const screenshot = await page.screenshot({
+			type: "png",
+			clip: {
+				x: 0,
+				y: 0,
+				width,
+				height,
+			},
+		});
+		
 		const buffer = Buffer.from(screenshot);
 		const base64String = buffer.toString("base64");
 
