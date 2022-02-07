@@ -86,6 +86,8 @@ const Home = () => {
 		setLoading(true);
 		setImageUrl(null);
 
+		if (!url && options.screenshot.url) setUrl(options.screenshot.url);
+
 		// Serverless function uses puppeteer to take screenshot
 		const {
 			data: { base64String, error: screenshotError },
