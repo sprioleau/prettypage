@@ -12,9 +12,9 @@ import {
 	InputGroup,
 	Radio,
 	RadioGroup,
-	Select,
 	Stack,
 	Text,
+	Tooltip,
 	useColorMode,
 	useToast,
 } from "@chakra-ui/react";
@@ -51,10 +51,10 @@ const Home = () => {
 	const { colorMode, toggleColorMode } = useColorMode();
 	const { width: windowWidth, height: windowHeight } = useWindowSize();
 
-	const placeholders = {
-		resolution: "Screenshot resolution",
-		colorMode: "Color mode",
-	};
+	// const placeholders = {
+	// 	resolution: "Screenshot resolution",
+	// 	colorMode: "Color mode",
+	// };
 
 	const options = {
 		screenshot: {
@@ -85,6 +85,7 @@ const Home = () => {
 		e.preventDefault();
 		setLoading(true);
 		setImageUrl(null);
+		setColorPickerOpen(false);
 
 		if (!url && options.screenshot.url) setUrl(options.screenshot.url);
 
@@ -112,11 +113,16 @@ const Home = () => {
 		setImageUrl(imageUrl);
 	};
 
-	const handleSelectResolution = (e) => {
-		const inputValue = e.target.value;
-		if (!inputValue) return setResolution(defaultOptions.resolution);
-		const { width, height, value } = screens.find((screen) => screen.value === inputValue);
-		setResolution({ width, height, value });
+	const handleSelectResolution = (optionResolution) => {
+		// const inputValue = e.target.value;
+		// if (!inputValue) return setResolution(defaultOptions.resolution);
+		const {
+			width,
+			height,
+			value,
+			resolution: screenResolution,
+		} = screens.find((screen) => screen.resolution === optionResolution);
+		setResolution({ width, height, value, resolution: screenResolution });
 	};
 
 	const urlRegex = /[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/gi;
@@ -185,11 +191,30 @@ const Home = () => {
 										{showUrlInvalidState ? <FormErrorMessage>Please enter a valid URL</FormErrorMessage> : null}
 									</FormControl>
 									<FormControl id="resolution" isDisabled={loading}>
-										<Select size="lg" placeholder={placeholders.resolution} onChange={handleSelectResolution}>
-											{screens.map(({ label, value, resolution }) => (
-												<option key={label} value={value}>{`${value} (${resolution})`}</option>
-											))}
-										</Select>
+										<Stack direction="column">
+											<Text mr={4} StactGrow={1}>
+												Screenshot Resolution:
+											</Text>
+											<Stack direction="row">
+												{screens.map(({ label, value, resolution: optionResolution }) => (
+													<Tooltip
+														key={label}
+														label={optionResolution}
+														aria-label={`tooltip for ${optionResolution}`}
+														hasArrow
+														placement="top"
+													>
+														<Button
+															variant={resolution.resolution === optionResolution ? "solid" : "outline"}
+															colorScheme="purple"
+															onClick={() => handleSelectResolution(optionResolution)}
+														>
+															{value}
+														</Button>
+													</Tooltip>
+												))}
+											</Stack>
+										</Stack>
 									</FormControl>
 									<RadioGroup value={screenshotColorMode} onChange={setScreenshotColorMode} isDisabled={loading}>
 										<Stack direction="row">
@@ -199,26 +224,34 @@ const Home = () => {
 										</Stack>
 									</RadioGroup>
 
-									<Button
-										className="color-picker"
-										bgColor={getRgbColor(color.rgb)}
-										flexGrow="1"
-										size="lg"
-										position="relative"
-										onClick={toggleColorPickerVisibility}
-										_hover={{ backgroundColor: getRgbColor(color.rgb) }}
-										_active={{ backgroundColor: getRgbColor(color.rgb) }}
-										isDisabled={loading}
-									>
-										<Text fontSize="md" color="gray.900">
-											Select Color
-										</Text>
+									<Box position="relative">
+										<Button
+											className="color-picker"
+											bgColor={getRgbColor(color.rgb)}
+											flexGrow="1"
+											size="lg"
+											width="full"
+											onClick={toggleColorPickerVisibility}
+											_hover={{ backgroundColor: getRgbColor(color.rgb) }}
+											_active={{ backgroundColor: getRgbColor(color.rgb) }}
+											isDisabled={loading}
+										>
+											<Text fontSize="md" color="gray.900">
+												Select Color
+											</Text>
+										</Button>
 										{colorPickerOpen && (
-											<Box position="absolute" zIndex="5" top="calc(100% + 0.25rem)">
+											<Box
+												position="absolute"
+												zIndex="5"
+												top="calc(100% + 0.25rem)"
+												left="50%"
+												transform="translateX(-50%)"
+											>
 												<TwitterPicker color={color} onChangeComplete={(color) => handleSelectColor(color)} />
 											</Box>
 										)}
-									</Button>
+									</Box>
 
 									<Button
 										size="lg"
