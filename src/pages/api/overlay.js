@@ -43,7 +43,7 @@ export default async function handler(req, res) {
 
 		res.status(500).json({
 			imageUrl: null,
-			error: error.message,
+			error,
 		});
 	}
 }

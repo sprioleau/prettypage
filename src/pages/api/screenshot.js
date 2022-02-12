@@ -69,7 +69,7 @@ export default async function handler(req, res) {
 
 		res.status(500).json({
 			base64String: null,
-			error: error.message,
+			error,
 		});
 	}
 }
