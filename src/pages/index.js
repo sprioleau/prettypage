@@ -192,7 +192,7 @@ const Home = () => {
 									</FormControl>
 									<FormControl id="resolution" isDisabled={loading}>
 										<Stack direction="column">
-											<Text mr={4} StactGrow={1}>
+											<Text mr={4} flexGrow={1}>
 												Screenshot Resolution:
 											</Text>
 											<Stack direction="row">
