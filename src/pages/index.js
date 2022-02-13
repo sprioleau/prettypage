@@ -42,19 +42,17 @@ const Home = () => {
 	const [color, setColor] = useState(defaultOptions.color);
 	const [screenshotColorMode, setScreenshotColorMode] = useState(defaultOptions.colorMode);
 	const [loading, setLoading] = useState(false);
+	const [secondaryOptionMessage, setSecondaryOptionMessage] = useState(null);
 	const toast = useToast({
-		position: "top",
+		position: "bottom-right",
 		status: "error",
 		isClosable: true,
+		variant: "solid",
+		id: "error-toast",
 	});
 
 	const { colorMode, toggleColorMode } = useColorMode();
 	const { width: windowWidth, height: windowHeight } = useWindowSize();
-
-	// const placeholders = {
-	// 	resolution: "Screenshot resolution",
-	// 	colorMode: "Color mode",
-	// };
 
 	const options = {
 		screenshot: {
@@ -83,30 +81,58 @@ const Home = () => {
 
 	const handleSubmit = async (e, options) => {
 		e.preventDefault();
+		setSecondaryOptionMessage(null);
 		setLoading(true);
 		setImageUrl(null);
 		setColorPickerOpen(false);
 
-		if (!url && options.screenshot.url) setUrl(options.screenshot.url);
+		setUrl(options.screenshot.url);
 
+		/* 
 		// Serverless function uses puppeteer to take screenshot
+		*/
 		const {
 			data: { base64String, error: screenshotError },
 		} = await fetchData("/api/screenshot", options.screenshot);
 
-		if (screenshotError) {
-			setLoading(false);
-			return toast({ title: screenshotError });
+		if (base64String && screenshotError) {
+			const sizeInBytes = base64String.length * (3 / 4) - 2;
+
+			if (sizeInBytes > 1000000) {
+				setLoading(false);
+				setImageUrl(`data:image/png;base64, ${base64String}`);
+				setSecondaryOptionMessage(
+					"We can't show you the fully prettified version, but you can download the original screenshot."
+				);
+				return toast({
+					title: "Image size exceeds 1mb.",
+					description: screenshotError,
+					status: "warning",
+				});
+			}
 		}
 
+		if (screenshotError) {
+			setLoading(false);
+			return toast({
+				title: "Sorry, we had trouble taking your screenshot",
+				description: screenshotError,
+			});
+		}
+
+		/* 
 		// Serverless function uses sharp to overlay background color and browser
+		*/
 		const {
 			data: { imageUrl, error: overlayError },
 		} = await fetchData(`/api/overlay`, { base64String, ...options.overlay });
 
 		if (overlayError) {
 			setLoading(false);
-			return toast({ title: overlayError });
+			return toast({
+				title: "Uh oh! We had trouble prettifying your screenshot",
+				description: overlayError,
+			});
 		}
 
 		setLoading(false);
@@ -114,8 +140,6 @@ const Home = () => {
 	};
 
 	const handleSelectResolution = (optionResolution) => {
-		// const inputValue = e.target.value;
-		// if (!inputValue) return setResolution(defaultOptions.resolution);
 		const {
 			width,
 			height,
@@ -208,6 +232,7 @@ const Home = () => {
 															variant={resolution.resolution === optionResolution ? "solid" : "outline"}
 															colorScheme="purple"
 															onClick={() => handleSelectResolution(optionResolution)}
+															disabled={loading}
 														>
 															{value}
 														</Button>
@@ -291,6 +316,11 @@ const Home = () => {
 									colors={["#f44336", "#e91e63", "#9c27b0", "#673ab7", "#3f51b5", "#2196f3", "#03a9f4", "#00bcd4"]}
 									recycle={false}
 								/>
+								{secondaryOptionMessage && (
+									<Text fontSize="large" mb={4} maxW="55ch" textAlign="center">
+										{secondaryOptionMessage}
+									</Text>
+								)}
 								<Image
 									src={imageUrl}
 									alt="screenshot"
@@ -325,7 +355,7 @@ const Home = () => {
 										colorScheme="purple"
 										leftIcon={<RiScreenshot2Line />}
 										variant="outline"
-										onClick={handleSubmit}
+										onClick={(e) => handleSubmit(e, options)}
 										style={{ marginLeft: 0 }}
 										color="purple.200"
 										flex="1 1 48%"

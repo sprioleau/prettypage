@@ -30,7 +30,7 @@ export default async function handler(req, res) {
 
 		page = await browser.newPage();
 		await page.goto(cleanedUrl, { waitUntil: "networkidle2" });
-		await page.waitForTimeout(2000);
+		await page.waitForTimeout(1500);
 
 		const screenshot = await page.screenshot({
 			type: "png",
@@ -41,19 +41,20 @@ export default async function handler(req, res) {
 				height,
 			},
 		});
-		
+
 		const buffer = Buffer.from(screenshot);
 		const base64String = buffer.toString("base64");
 
 		if (page) await page.close();
 		if (browser) await browser.close();
 
-		const sizeInBytes = base64String * (3 / 4) - 2;
+		const sizeInBytes = base64String.length * (3 / 4) - 2;
+		const sizeInMegabytes = (sizeInBytes / 1000000).toFixed(1);
 
 		if (sizeInBytes > 1000000) {
 			res.status(413).json({
-				base64String: null,
-				error: "Image is too large",
+				base64String,
+				error: `Your screenshot was ${sizeInMegabytes}mb. Websites with simple images in the intro section work best`,
 			});
 		}
 
