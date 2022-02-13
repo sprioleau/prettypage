@@ -56,12 +56,12 @@ export default async function handler(req, res) {
 				base64String,
 				error: `Your screenshot was ${sizeInMegabytes}mb. Websites with simple images in the intro section work best`,
 			});
+		} else {
+			res.status(200).json({
+				base64String,
+				error: null,
+			});
 		}
-
-		res.status(200).json({
-			base64String,
-			error: null,
-		});
 	} catch (error) {
 		console.error(error);
 
