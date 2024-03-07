@@ -1,10 +1,7 @@
 import chromium from "chrome-aws-lambda";
-// import puppeteer from "puppeteer-extra";
-// import puppeteer from "puppeteer-core";
 
 async function getBrowserInstance({ width, height }) {
 	const executablePath = await chromium.executablePath;
-	console.log("🚀 ~ getBrowserInstance ~ executablePath:", executablePath);
 
 	// prettier-ignore
 	const launchOptions = {
@@ -16,7 +13,7 @@ async function getBrowserInstance({ width, height }) {
 
 	if (!executablePath) {
 		// running locally
-		const puppeteer = require("puppeteer");
+		const puppeteer = await import("puppeteer");
 		return puppeteer.launch(launchOptions);
 	}
 
@@ -25,16 +22,6 @@ async function getBrowserInstance({ width, height }) {
 		executablePath,
 		headless: chromium.headless,
 	});
-	// return chromium.puppeteer.launch({
-	// 	args: chromium.args,
-	// 	headless: chromium.headless,
-	// 	defaultViewport: {
-	// 		width,
-	// 		height,
-	// 	},
-	// 	executablePath,
-	// 	ignoreHTTPSErrors: true,
-	// });
 }
 
 export default async function handler(req, res) {
@@ -47,23 +34,6 @@ export default async function handler(req, res) {
 
 	try {
 		browser = await getBrowserInstance({ width, height });
-		// browser = await chromium.puppeteer.launch({
-		// 	executablePath: await chromium.executablePath,
-		// 	args: [
-		// 		"--disable-gpu",
-		// 		"--disable-dev-shm-usage",
-		// 		"--disable-setuid-sandbox",
-		// 		"--no-first-run",
-		// 		"--no-sandbox",
-		// 		"--no-zygote",
-		// 		"--single-process",
-		// 	],
-		// 	headless: true,
-		// 	defaultViewport: {
-		// 		width,
-		// 		height,
-		// 	},
-		// });
 
 		page = await browser.newPage();
 		await page.goto(cleanedUrl, { waitUntil: "networkidle2" });
