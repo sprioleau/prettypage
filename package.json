@@ -29,7 +29,7 @@
 		"export": "next export"
 	},
 	"engines": {
-		"node": "18.x"
+		"node": ">=18"
 	},
 	"dependencies": {
 		"@chakra-ui/react": "^2.8.2",
