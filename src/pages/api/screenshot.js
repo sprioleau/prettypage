@@ -1,5 +1,5 @@
 async function getBrowserInstance({ width, height }) {
-	const chromium = await import("chrome-aws-lambda");
+	const chromium = await import("chrome-aws-lambda").then((module) => module.default);
 
 	const launchOptions = {
 		args: chromium.args,
@@ -10,12 +10,13 @@ async function getBrowserInstance({ width, height }) {
 
 	if (!process.env.AWS_LAMBDA_FUNCTION_VERSION) {
 		// running locally
-		const puppeteer = await import("puppeteer");
+		const puppeteer = await import("puppeteer").then((module) => module.default);
 		return puppeteer.launch({
 			...launchOptions,
 			executablePath: puppeteer.executablePath("chrome"),
 		});
 	} else {
+		// const puppeteer = await import("puppeteer-core").then((module) => module.default);
 		// running on the Vercel platform
 		return chromium.puppeteer.launch({
 			...launchOptions,
@@ -28,15 +29,16 @@ async function getBrowserInstance({ width, height }) {
 export default async function handler(req, res) {
 	const { url, width, height } = req.body;
 
-	let browser = null;
-	let page = null;
+	// prettier-ignore
+	// let browser = null,
+	// 		page = null;
 
 	const cleanedUrl = url.startsWith("http") ? url : `https://${url}`;
 
 	try {
-		browser = await getBrowserInstance({ width, height });
+		const browser = await getBrowserInstance({ width, height });
 
-		page = await browser.newPage();
+		const page = await browser.newPage();
 		await page.goto(cleanedUrl, { waitUntil: "networkidle2" });
 		await page.waitForNetworkIdle();
 
@@ -73,8 +75,8 @@ export default async function handler(req, res) {
 	} catch (error) {
 		console.error(error);
 
-		if (page) await page.close();
-		if (browser) await browser.close();
+		// if (page) await page.close();
+		// if (browser) await browser.close();
 
 		res.status(500).json({
 			base64String: null,
