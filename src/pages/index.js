@@ -89,7 +89,7 @@ const Home = () => {
 		setUrl(options.screenshot.url);
 
 		/* 
-		// Serverless function uses puppeteer to take screenshot
+			Serverless function uses puppeteer to take screenshot
 		*/
 		const {
 			data: { base64String, error: screenshotError },
@@ -121,7 +121,7 @@ const Home = () => {
 		}
 
 		/* 
-		// Serverless function uses sharp to overlay background color and browser
+			Serverless function uses sharp to overlay background color and browser
 		*/
 		const {
 			data: { imageUrl, error: overlayError },
@@ -173,18 +173,42 @@ const Home = () => {
 	const pageBgColor = colorMode === "light" ? "gray.100" : "gray.900";
 
 	return (
-		<Flex as="div" className="app" direction="column" bgColor={pageBgColor}>
+		<Flex
+			as="div"
+			className="app"
+			direction="column"
+			bgColor={pageBgColor}
+		>
 			<Head>
 				<title>Pretty Page</title>
 			</Head>
-			<Flex className="app" direction="column" justify="space-between" minHeight="100vh">
-				<Container display="flex" justifyContent="center" my={8} mb={4}>
-					<Button onClick={toggleColorMode} leftIcon={<CgDarkMode />} bgColor="gray.300" textColor="gray.900">
+			<Flex
+				className="app"
+				direction="column"
+				justify="space-between"
+				minHeight="100vh"
+			>
+				<Container
+					display="flex"
+					justifyContent="center"
+					my={8}
+					mb={4}
+				>
+					<Button
+						onClick={toggleColorMode}
+						leftIcon={<CgDarkMode />}
+						bgColor="gray.300"
+						textColor="gray.900"
+					>
 						Toggle {colorMode === "light" ? "Dark" : "Light"} Mode
 					</Button>
 				</Container>
 
-				<Box as="main" px={4} bgColor={pageBgColor}>
+				<Box
+					as="main"
+					px={4}
+					bgColor={pageBgColor}
+				>
 					{!imageUrl ? (
 						<Container
 							as="section"
@@ -199,9 +223,17 @@ const Home = () => {
 							borderColor="gray.400"
 						>
 							<form onSubmit={(e) => handleSubmit(e, options)}>
-								<Stack spacing={4} my={6}>
+								<Stack
+									spacing={4}
+									my={6}
+								>
 									<Hero />
-									<FormControl id="url-input" isRequired isInvalid={showUrlInvalidState} isDisabled={loading}>
+									<FormControl
+										id="url-input"
+										isRequired
+										isInvalid={showUrlInvalidState}
+										isDisabled={loading}
+									>
 										<FormLabel htmlFor="url-input">URL</FormLabel>
 										<InputGroup size="lg">
 											<Input
@@ -214,9 +246,15 @@ const Home = () => {
 										</InputGroup>
 										{showUrlInvalidState ? <FormErrorMessage>Please enter a valid URL</FormErrorMessage> : null}
 									</FormControl>
-									<FormControl id="resolution" isDisabled={loading}>
+									<FormControl
+										id="resolution"
+										isDisabled={loading}
+									>
 										<Stack direction="column">
-											<Text mr={4} flexGrow={1}>
+											<Text
+												mr={4}
+												flexGrow={1}
+											>
 												Screenshot Resolution:
 											</Text>
 											<Stack direction="row">
@@ -241,7 +279,11 @@ const Home = () => {
 											</Stack>
 										</Stack>
 									</FormControl>
-									<RadioGroup value={screenshotColorMode} onChange={setScreenshotColorMode} isDisabled={loading}>
+									<RadioGroup
+										value={screenshotColorMode}
+										onChange={setScreenshotColorMode}
+										isDisabled={loading}
+									>
 										<Stack direction="row">
 											<Text>Screenshot Color Mode: </Text>
 											<Radio value="light">Light</Radio>
@@ -261,7 +303,10 @@ const Home = () => {
 											_active={{ backgroundColor: getRgbColor(color.rgb) }}
 											isDisabled={loading}
 										>
-											<Text fontSize="md" color="gray.900">
+											<Text
+												fontSize="md"
+												color="gray.900"
+											>
 												Select Color
 											</Text>
 										</Button>
@@ -273,7 +318,10 @@ const Home = () => {
 												left="50%"
 												transform="translateX(-50%)"
 											>
-												<TwitterPicker color={color} onChangeComplete={(color) => handleSelectColor(color)} />
+												<TwitterPicker
+													color={color}
+													onChangeComplete={(color) => handleSelectColor(color)}
+												/>
 											</Box>
 										)}
 									</Box>
@@ -307,8 +355,18 @@ const Home = () => {
 							</form>
 						</Container>
 					) : (
-						<Container as="section" width="clamp(300px, 90%, 1000px)" maxW="unset" px={6} mb={12}>
-							<Flex align="center" justify="center" direction="column">
+						<Container
+							as="section"
+							width="clamp(300px, 90%, 1000px)"
+							maxW="unset"
+							px={6}
+							mb={12}
+						>
+							<Flex
+								align="center"
+								justify="center"
+								direction="column"
+							>
 								<Confetti
 									width={windowWidth}
 									height={windowHeight}
@@ -317,7 +375,12 @@ const Home = () => {
 									recycle={false}
 								/>
 								{secondaryOptionMessage && (
-									<Text fontSize="large" mb={4} maxW="55ch" textAlign="center">
+									<Text
+										fontSize="large"
+										mb={4}
+										maxW="55ch"
+										textAlign="center"
+									>
 										{secondaryOptionMessage}
 									</Text>
 								)}
