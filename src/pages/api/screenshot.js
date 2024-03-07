@@ -1,44 +1,37 @@
-async function getBrowserInstance({ width, height }) {
-	const chromium = await import("chrome-aws-lambda").then((module) => module.default);
-
-	const launchOptions = {
-		args: chromium.args,
-		headless: true,
-		defaultViewport: { width, height },
-		ignoreHTTPSErrors: true,
-	};
-
-	if (!process.env.AWS_LAMBDA_FUNCTION_VERSION) {
-		// running locally
-		const puppeteer = await import("puppeteer").then((module) => module.default);
-		return puppeteer.launch({
-			...launchOptions,
-			executablePath: puppeteer.executablePath("chrome"),
-		});
-	} else {
-		const puppeteer = await import("puppeteer-core").then((module) => module.default);
-		// running on the Vercel platform
-		return puppeteer.launch({
-			...launchOptions,
-			executablePath: await chromium.executablePath,
-			headless: chromium.headless,
-		});
-	}
-}
+import chrome from "chrome-aws-lambda";
+import puppeteer from "puppeteer-core";
 
 export default async function handler(req, res) {
 	const { url, width, height } = req.body;
-
-	// prettier-ignore
-	// let browser = null,
-	// 		page = null;
-
 	const cleanedUrl = url.startsWith("http") ? url : `https://${url}`;
 
-	try {
-		const browser = await getBrowserInstance({ width, height });
+	// Reference: https://github.com/vercel/virtual-event-starter-kit/blob/main/lib/screenshot.ts
+	const launchOptions = process.env.AWS_REGION
+		? {
+				args: chrome.args,
+				defaultViewport: { width, height },
+				executablePath: await chrome.executablePath,
+				headless: chrome.headless,
+		  }
+		: {
+				args: [],
+				defaultViewport: { width, height },
+				executablePath:
+					process.platform === "win32"
+						? "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"
+						: process.platform === "linux"
+						? "/usr/bin/google-chrome"
+						: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+		  };
 
-		const page = await browser.newPage();
+	// prettier-ignore
+	let browser = null,
+			page = null;
+
+	try {
+		browser = await puppeteer.launch(launchOptions);
+
+		page = await browser.newPage();
 		await page.goto(cleanedUrl, { waitUntil: "networkidle2" });
 		await page.waitForNetworkIdle();
 
@@ -75,8 +68,8 @@ export default async function handler(req, res) {
 	} catch (error) {
 		console.error(error);
 
-		// if (page) await page.close();
-		// if (browser) await browser.close();
+		if (page) await page.close();
+		if (browser) await browser.close();
 
 		res.status(500).json({
 			base64String: null,
