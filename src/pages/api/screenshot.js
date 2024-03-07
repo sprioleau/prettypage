@@ -8,7 +8,8 @@ export default async function handler(req, res) {
 	// Reference: https://github.com/vercel/virtual-event-starter-kit/blob/main/lib/screenshot.ts
 	const launchOptions = process.env.AWS_REGION
 		? {
-				args: chrome.args,
+				args: [...chrome.args, "enable-gpu"],
+				ignoreDefaultArgs: ["--disable-extensions"],
 				defaultViewport: { width, height },
 				executablePath: await chrome.executablePath,
 				headless: chrome.headless,
