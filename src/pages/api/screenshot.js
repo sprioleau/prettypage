@@ -12,7 +12,9 @@ export default async function handler(req, res) {
 				args: [...chrome.args, "--enable-gpu", "--no-sandbox"],
 				ignoreDefaultArgs: ["--disable-extensions"],
 				defaultViewport: { width, height },
-				executablePath: await chrome.executablePath(),
+				executablePath: await chrome.executablePath(
+					"https://github.com/Sparticuz/chromium/releases/download/v110.0.1/chromium-v110.0.1-pack.tar"
+				),
 				headless: chrome.headless,
 		  }
 		: {
