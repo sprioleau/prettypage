@@ -16,7 +16,7 @@ async function getBrowserInstance({ width, height }) {
 			executablePath: puppeteer.executablePath("chrome"),
 		});
 	} else {
-		// const puppeteer = await import("puppeteer-core").then((module) => module.default);
+		await import("puppeteer-core").then((module) => module.default);
 		// running on the Vercel platform
 		return chromium.puppeteer.launch({
 			...launchOptions,
