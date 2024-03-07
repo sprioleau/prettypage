@@ -1,5 +1,4 @@
-// import chrome from "chrome-aws-lambda";
-import chrome from "@sparticuz/chromium";
+import chrome from "chrome-aws-lambda";
 import puppeteer from "puppeteer-core";
 
 export default async function handler(req, res) {
@@ -12,7 +11,7 @@ export default async function handler(req, res) {
 				args: [...chrome.args, "--enable-gpu", "--no-sandbox"],
 				ignoreDefaultArgs: ["--disable-extensions"],
 				defaultViewport: { width, height },
-				executablePath: await chrome.executablePath(),
+				executablePath: await chrome.executablePath,
 				headless: chrome.headless,
 		  }
 		: {
