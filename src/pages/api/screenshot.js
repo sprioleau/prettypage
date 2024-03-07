@@ -1,7 +1,16 @@
-import chromium from "chrome-aws-lambda";
-
 async function getBrowserInstance({ width, height }) {
-	const executablePath = await chromium.executablePath;
+	const chromium = await import("chrome-aws-lambda");
+
+	// if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
+	// 	// running on the Vercel platform
+	// 	// chromium = await import("chrome-aws-lambda");
+	// 	puppeteer = await import("puppeteer-core");
+	// } else {
+	// 	// running locally
+	// 	puppeteer = require("puppeteer");
+	// }
+
+	// const executablePath = await chromium.executablePath;
 
 	// prettier-ignore
 	const launchOptions = {
@@ -11,18 +20,21 @@ async function getBrowserInstance({ width, height }) {
 		ignoreHTTPSErrors: true,
 	};
 
-	if (!executablePath) {
+	if (!process.env.AWS_LAMBDA_FUNCTION_VERSION) {
 		// running locally
-		const { executablePath: puppeteerExecutablePath } = await import("puppeteer");
-		const puppeteer = await import("puppeteer-core");
-		return puppeteer.launch({ ...launchOptions, executablePath: puppeteerExecutablePath("chrome") });
+		const puppeteer = await import("puppeteer");
+		return puppeteer.launch({
+			...launchOptions,
+			executablePath: puppeteer.executablePath("chrome"),
+		});
+	} else {
+		// running on the Vercel platform
+		return chromium.puppeteer.launch({
+			...launchOptions,
+			executablePath: await chromium.executablePath,
+			headless: chromium.headless,
+		});
 	}
-
-	return chromium.puppeteer.launch({
-		...launchOptions,
-		executablePath,
-		headless: chromium.headless,
-	});
 }
 
 export default async function handler(req, res) {
