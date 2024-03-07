@@ -52,8 +52,8 @@ export default async function handler(req, res) {
 		const buffer = Buffer.from(screenshot);
 		const base64String = buffer.toString("base64");
 
-		if (page) await page.close();
-		if (browser) await browser.close();
+		// if (page) await page.close();
+		// if (browser) await browser.close();
 
 		const sizeInBytes = base64String.length * (3 / 4) - 2;
 		const sizeInMegabytes = (sizeInBytes / 1_000_000).toFixed(1);
