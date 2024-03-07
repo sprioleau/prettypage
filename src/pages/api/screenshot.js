@@ -14,7 +14,9 @@ export default async function handler(req, res) {
 				args: chrome.args,
 				ignoreDefaultArgs: ["--disable-extensions"],
 				defaultViewport: { width, height },
-				executablePath: await chrome.executablePath(),
+				executablePath: await chrome.executablePath(
+					"https://github.com/Sparticuz/chromium/releases/download/v119.0.2/chromium-v119.0.2-pack.tar"
+				),
 				headless: "new",
 				ignoreHTTPSErrors: true,
 		  }
