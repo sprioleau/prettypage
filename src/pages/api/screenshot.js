@@ -1,5 +1,6 @@
 // import chrome from "chrome-aws-lambda";
-const chrome = require("@sparticuz/chromium");
+// import chrome from "@sparticuz/chromium";
+import chrome from "@sparticuz/chromium-min";
 import puppeteer from "puppeteer-core";
 
 export default async function handler(req, res) {
