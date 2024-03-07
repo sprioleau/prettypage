@@ -13,8 +13,9 @@ async function getBrowserInstance({ width, height }) {
 
 	if (!executablePath) {
 		// running locally
-		const puppeteer = await import("puppeteer");
-		return puppeteer.launch(launchOptions);
+		const { executablePath: puppeteerExecutablePath } = await import("puppeteer");
+		const puppeteer = await import("puppeteer-core");
+		return puppeteer.launch({ ...launchOptions, executablePath: puppeteerExecutablePath("chrome") });
 	}
 
 	return chromium.puppeteer.launch({
