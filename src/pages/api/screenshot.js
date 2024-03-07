@@ -26,13 +26,13 @@ export default async function handler(req, res) {
 		  };
 
 	// prettier-ignore
-	let browser = null,
-			page = null;
+	// let browser = null,
+	// 		page = null;
 
 	try {
-		browser = await puppeteer.launch(launchOptions);
+		const browser = await puppeteer.launch(launchOptions);
 
-		page = await browser.newPage();
+		const page = await browser.newPage();
 		await page.goto(cleanedUrl, { waitUntil: "networkidle2" });
 		await page.waitForNetworkIdle();
 
@@ -69,8 +69,8 @@ export default async function handler(req, res) {
 	} catch (error) {
 		console.error(error);
 
-		if (page) await page.close();
-		if (browser) await browser.close();
+		// if (page) await page.close();
+		// if (browser) await browser.close();
 
 		res.status(500).json({
 			base64String: null,
