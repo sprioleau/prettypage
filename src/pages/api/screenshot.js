@@ -1,4 +1,5 @@
-import chrome from "chrome-aws-lambda";
+// import chrome from "chrome-aws-lambda";
+const chrome = require("@sparticuz/chromium");
 import puppeteer from "puppeteer-core";
 
 export default async function handler(req, res) {
@@ -8,11 +9,13 @@ export default async function handler(req, res) {
 	// Reference: https://github.com/vercel/virtual-event-starter-kit/blob/main/lib/screenshot.ts
 	const launchOptions = process.env.AWS_REGION
 		? {
-				args: [...chrome.args, "--enable-gpu", "--no-sandbox"],
+				// args: [...chrome.args, "--enable-gpu", "--no-sandbox"],
+				args: chrome.args,
 				ignoreDefaultArgs: ["--disable-extensions"],
 				defaultViewport: { width, height },
-				executablePath: await chrome.executablePath,
-				headless: chrome.headless,
+				executablePath: await chrome.executablePath(),
+				headless: "new",
+				ignoreHTTPSErrors: true,
 		  }
 		: {
 				args: [],
