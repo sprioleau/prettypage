@@ -1,18 +1,6 @@
 async function getBrowserInstance({ width, height }) {
 	const chromium = await import("chrome-aws-lambda");
 
-	// if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
-	// 	// running on the Vercel platform
-	// 	// chromium = await import("chrome-aws-lambda");
-	// 	puppeteer = await import("puppeteer-core");
-	// } else {
-	// 	// running locally
-	// 	puppeteer = require("puppeteer");
-	// }
-
-	// const executablePath = await chromium.executablePath;
-
-	// prettier-ignore
 	const launchOptions = {
 		args: chromium.args,
 		headless: true,
