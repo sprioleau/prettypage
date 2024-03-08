@@ -21,10 +21,7 @@ export default async function handler(req, res) {
 		? {
 				args: [...chrome.args, "--hide-scrollbars", "--disable-web-security", "--enable-gpu", "--no-sandbox"],
 				defaultViewport: { width, height },
-				executablePath: await chrome.executablePath(
-					// `https://github.com/Sparticuz/chromium/releases/download/v116.0.0/chromium-v116.0.0-pack.tar`
-					process.env.CHROME_EXECUTABLE_PATH
-				),
+				executablePath: await chrome.executablePath(process.env.CHROME_EXECUTABLE_PATH),
 				headless: chrome.headless,
 				ignoreHTTPSErrors: true,
 		  }
@@ -35,7 +32,6 @@ export default async function handler(req, res) {
 				ignoreHTTPSErrors: true,
 		  };
 
-	console.log("🚀 ~ handler ~ process.env.CHROME_EXECUTABLE_PATH:", process.env.CHROME_EXECUTABLE_PATH);
 	try {
 		const browser = await puppeteer.launch(launchOptions);
 
