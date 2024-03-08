@@ -1,6 +1,5 @@
-import chrome from "chrome-aws-lambda";
-// import puppeteer from "puppeteer-core";
-import playwright from "playwright-core";
+import chrome from "@sparticuz/chromium-min";
+import puppeteer from "puppeteer-core";
 
 function getLocalExecutablePath() {
 	switch (process.platform) {
@@ -20,11 +19,11 @@ export default async function handler(req, res) {
 	// Reference: https://github.com/vercel/virtual-event-starter-kit/blob/main/lib/screenshot.ts
 	const launchOptions = process.env.AWS_REGION
 		? {
-				args: [...chrome.args, "--enable-gpu", "--no-sandbox"],
-				// args: chrome.args,
-				ignoreDefaultArgs: ["--disable-extensions"],
+				args: [...chrome.args, "--hide-scrollbars", "--disable-web-security", "--enable-gpu", "--no-sandbox"],
 				defaultViewport: { width, height },
-				executablePath: await chrome.executablePath,
+				executablePath: await chrome.executablePath(
+					`https://github.com/Sparticuz/chromium/releases/download/v116.0.0/chromium-v116.0.0-pack.tar`
+				),
 				headless: "new",
 				ignoreHTTPSErrors: true,
 		  }
@@ -32,18 +31,14 @@ export default async function handler(req, res) {
 				args: [],
 				defaultViewport: { width, height },
 				executablePath: getLocalExecutablePath(),
+				ignoreHTTPSErrors: true,
 		  };
 
-	// // prettier-ignore
-	// let browser = null,
-	// 		page = null;
-
 	try {
-		const browser = await playwright.chromium.launch(launchOptions);
+		const browser = await puppeteer.launch(launchOptions);
 
 		const page = await browser.newPage();
-		await page.goto(cleanedUrl);
-		await page.waitForLoadState();
+		await page.goto(cleanedUrl, { waitUntil: "networkidle2" });
 
 		const screenshot = await page.screenshot({
 			type: "png",
@@ -77,9 +72,6 @@ export default async function handler(req, res) {
 		}
 	} catch (error) {
 		console.error(error);
-
-		// if (page) await page.close();
-		// if (browser) await browser.close();
 
 		res.status(500).json({
 			base64String: null,
