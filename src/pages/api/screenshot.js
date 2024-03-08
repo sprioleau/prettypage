@@ -1,7 +1,17 @@
-// import chrome from "chrome-aws-lambda";
-// import chrome from "@sparticuz/chromium";
-import chrome from "@sparticuz/chromium-min";
-import puppeteer from "puppeteer-core";
+import chrome from "chrome-aws-lambda";
+// import puppeteer from "puppeteer-core";
+import playwright from "playwright-core";
+
+function getLocalExecutablePath() {
+	switch (process.platform) {
+		case "win32":
+			return "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe";
+		case "linux":
+			return "/usr/bin/google-chrome";
+		default:
+			return "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+	}
+}
 
 export default async function handler(req, res) {
 	const { url, width, height } = req.body;
@@ -10,37 +20,30 @@ export default async function handler(req, res) {
 	// Reference: https://github.com/vercel/virtual-event-starter-kit/blob/main/lib/screenshot.ts
 	const launchOptions = process.env.AWS_REGION
 		? {
-				// args: [...chrome.args, "--enable-gpu", "--no-sandbox"],
-				args: chrome.args,
+				args: [...chrome.args, "--enable-gpu", "--no-sandbox"],
+				// args: chrome.args,
 				ignoreDefaultArgs: ["--disable-extensions"],
 				defaultViewport: { width, height },
-				executablePath: await chrome.executablePath(
-					"https://github.com/Sparticuz/chromium/releases/download/v119.0.2/chromium-v119.0.2-pack.tar"
-				),
+				executablePath: await chrome.executablePath,
 				headless: "new",
 				ignoreHTTPSErrors: true,
 		  }
 		: {
 				args: [],
 				defaultViewport: { width, height },
-				executablePath:
-					process.platform === "win32"
-						? "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"
-						: process.platform === "linux"
-						? "/usr/bin/google-chrome"
-						: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+				executablePath: getLocalExecutablePath(),
 		  };
 
-	// prettier-ignore
+	// // prettier-ignore
 	// let browser = null,
 	// 		page = null;
 
 	try {
-		const browser = await puppeteer.launch(launchOptions);
+		const browser = await playwright.chromium.launch(launchOptions);
 
 		const page = await browser.newPage();
-		await page.goto(cleanedUrl, { waitUntil: "networkidle2" });
-		await page.waitForNetworkIdle();
+		await page.goto(cleanedUrl);
+		await page.waitForLoadState();
 
 		const screenshot = await page.screenshot({
 			type: "png",
@@ -55,8 +58,8 @@ export default async function handler(req, res) {
 		const buffer = Buffer.from(screenshot);
 		const base64String = buffer.toString("base64");
 
-		// if (page) await page.close();
-		// if (browser) await browser.close();
+		if (page) await page.close();
+		if (browser) await browser.close();
 
 		const sizeInBytes = base64String.length * (3 / 4) - 2;
 		const sizeInMegabytes = (sizeInBytes / 1_000_000).toFixed(1);
