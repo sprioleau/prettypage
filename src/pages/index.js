@@ -116,7 +116,7 @@ const Home = () => {
 			setLoading(false);
 			return toast({
 				title: "Sorry, we had trouble taking your screenshot",
-				description: screenshotError,
+				description: JSON.stringify(screenshotError, null, 2),
 			});
 		}
 

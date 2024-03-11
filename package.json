@@ -35,7 +35,7 @@
 		"@chakra-ui/react": "^2.8.2",
 		"@emotion/react": "^11.11.4",
 		"@emotion/styled": "^11.11.0",
-		"@sparticuz/chromium-min": "122.0.0",
+		"@sparticuz/chromium-min": "116.0.0",
 		"axios": "^1.6.7",
 		"file-saver": "^2.0.5",
 		"framer-motion": "^6.5.1",
